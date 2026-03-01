@@ -16,5 +16,5 @@ all: $(OBJS)
 main.o: main.cpp
 	$(CXX) -c $(CXXFLAGS) main.cpp -o main.o
 
-molCode.o: molCode.cpp
+molCode.o: src/molCode.cpp
 	$(CXX) -c $(CXXFLAGS) src/molCode.cpp -o molCode.o

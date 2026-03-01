@@ -5,13 +5,15 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <filesystem>
+#include <fstream>
 
 class molCode
 {
 private:
     size_t x, y;
     char modo;
-    std::string nome_arquivo, estado;
+    std::string nome_arquivo, estado, sessao;
     std::vector<std::string> linhas;
 
     void ch_remover(int);
@@ -29,8 +31,12 @@ protected:
     void linhaDeEstado();
     void entrada(int);
     void imprimir();
+
     void cima();
     void esquerda();
     void direita();
     void baixo();
+
+    void abrir();
+    void salvar();
 };

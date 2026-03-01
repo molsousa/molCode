@@ -2,10 +2,10 @@
 
 molCode::molCode(const std::string& arquivo)
 {
-    linhas.push_back("");
     x = y = 0;
     modo = 'n';
     estado = "NORMAL";
+    sessao = "";
 
     if(arquivo.empty())
         nome_arquivo = "sem_titulo";
@@ -13,10 +13,13 @@ molCode::molCode(const std::string& arquivo)
     else
         nome_arquivo = arquivo;
 
+    abrir();
+
     initscr();
     noecho();
     cbreak();
     keypad(stdscr, true);
+    use_default_colors();
 }
 
 molCode::~molCode()
@@ -39,24 +42,42 @@ void molCode::inicializar()
 void molCode::atualizar()
 {
     switch(modo){
-    case 27:
     case 'n':
         estado = "NORMAL";
         break;
 
     case 'i':
-        estado = "INSERT";
+        estado = "INSERIR";
         break;
 
     case 'q':
         break;
     }
+
+    sessao = " COLUNAS: " + std::to_string(x) + " | LINHAS: " + std::to_string(y) + " | ARQUIVO: " + nome_arquivo;
+    estado.insert(0, " ");
 }
 
 void molCode::linhaDeEstado()
 {
+    start_color();
+    if(modo == 'n')
+        init_pair(1, COLOR_CYAN, COLOR_BLACK);
+
+    else
+        init_pair(1, COLOR_RED, COLOR_BLACK);
+
     attron(A_REVERSE);
+    attron(COLOR_PAIR(1));
+
+    for(int i {}; i < COLS; ++i){
+        mvprintw(LINES-1, i, " ");
+    }
+
     mvprintw(LINES - 1, 0, estado.c_str());
+    mvprintw(LINES - 1, COLS - sessao.length(), &sessao[0]);
+
+    attroff(COLOR_PAIR(1));
     attroff(A_REVERSE);
 }
 
@@ -84,7 +105,6 @@ void molCode::entrada(int c)
     case 27:
     case 'n':
         switch(c){
-        case 27:
         case 'q':
             modo = 'q';
             break;
@@ -93,6 +113,12 @@ void molCode::entrada(int c)
             break;
         case 'w':
             modo = 'w';
+            salvar();
+            refresh();
+            endwin();
+            std::printf("Salvo");
+            exit(0);
+            // TODO salvar sem sair
             break;
         }
         break;
@@ -152,7 +178,6 @@ void molCode::entrada(int c)
         }
         break;
     }
-
 }
 
 void molCode::imprimir()
@@ -232,4 +257,43 @@ void molCode::baixo()
     }
 
     move(y, x);
+}
+
+void molCode::abrir()
+{
+    if(std::filesystem::exists(nome_arquivo)){
+        std::ifstream ifile(nome_arquivo);
+
+        if(ifile.is_open()){
+            while(!ifile.eof()){
+                std::string buffer;
+                std::getline(ifile, buffer);
+
+                ch_anexo(buffer);
+            }
+        }
+        else
+            throw std::runtime_error("Não é possível abrir o arquivo. Permissão negada");
+    }
+    else{
+        std::string str {};
+        ch_anexo(str);
+    }
+}
+
+void molCode::salvar()
+{
+    std::ofstream ofile(nome_arquivo);
+
+    if(ofile.is_open()){
+        for(size_t i{}; i < linhas.size(); ++i){
+            ofile << linhas[i] << '\n';
+        }
+        ofile.close();
+    }
+    else{
+        refresh();
+        endwin();
+        throw std::runtime_error("Não é possível abrir o arquivo. Permissão negada");
+    }
 }
