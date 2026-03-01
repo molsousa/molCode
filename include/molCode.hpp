@@ -9,13 +9,19 @@
 #include <fstream>
 #include <locale.h>
 
+// Definição de macros para string literal
 #define SEM_TITULO "sem_titulo"
 #define MODO_NORMAL "NORMAL"
 #define MODO_INSERIR "INSERIR"
 #define STRING_VAZIA ""
 #define ESPACO " "
 
+// Definição de macros para valores numéricos
 #define ESC 27
+#define CTRL_CIMA 0x270
+#define CTRL_ESQUERDA 0x271
+#define CTRL_DIREITA 0x272
+#define CTRL_BAIXO 0x273
 
 class molCode
 {
@@ -33,6 +39,8 @@ private:
     void ch_inserir(std::string, int);
     // Método para inserir ao final da linha
     void ch_anexo(std::string&);
+    // Método para definição de constantes
+    void definir_constantes();
 
 public:
     /*

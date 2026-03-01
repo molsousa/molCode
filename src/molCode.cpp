@@ -25,6 +25,7 @@ molCode::molCode(const std::string& arquivo)
     noecho(); // desativa a exibição automática dos caracteres digitados no terminal
     cbreak(); // os caracteres digitados pelo usuário são enviados pra tela
     keypad(stdscr, true);
+    definir_constantes();
     use_default_colors(); // cores padrões
 }
 
@@ -424,4 +425,13 @@ void molCode::salvar_sair()
         endwin();
         throw std::runtime_error("Não é possível abrir o arquivo. Permissão negada");
     }
+}
+
+// Método para definição de constantes
+void molCode::definir_constantes()
+{
+    define_key("\033[1;5A", CTRL_CIMA);
+    define_key("\033[1;5D", CTRL_ESQUERDA);
+    define_key("\033[1;5C", CTRL_DIREITA);
+    define_key("\033[1;5B", CTRL_BAIXO);
 }
