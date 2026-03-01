@@ -146,13 +146,14 @@ void molCode::entrada(int c)
         // salva e finaliza o editor
         case 'w':
             modo = 'w';
-            salvar_sair();
+            salvar();
             refresh();
             endwin();
             std::printf("Salvo.");
             exit(0);
             break;
 
+        // salva sem sair do editor
         case 's':
             modo = 's';
             salvar();
@@ -499,7 +500,7 @@ void molCode::abrir()
 }
 
 // Método para salvar arquivo e sair em seguida.
-void molCode::salvar_sair()
+void molCode::salvar()
 {
     std::ofstream ofile(nome_arquivo);
 
@@ -521,46 +522,19 @@ void molCode::salvar_sair()
     }
 }
 
-// Método para salvar sem sair
-void molCode::salvar()
-{
-    std::ofstream ofile(nome_arquivo);
-
-    if(ofile.is_open()){
-        for(size_t i{}; i < linhas.size(); ++i){
-            ofile << linhas[i]; // salva o arquivo
-
-            // Não insere enter ao final do arquivo
-            if(i < linhas.size()-1)
-                ofile << '\n';
-        }
-
-        ofile.close();
-    }
-    else{ // joga exceção caso o arquivo tenha permissão especial para não modificar
-        refresh();
-        endwin();
-        throw std::runtime_error("Não é possível abrir o arquivo. Permissão negada");
-    }
-}
-
 // Método para definição de constantes
 void molCode::definir_constantes()
 {
     define_key("\033[1;5A", CTRL_CIMA);
     define_key("\033[1;5D", CTRL_ESQUERDA);
-    define_key("\033[1;5C", CTRL_DIREITA);
+    define_key("\033[1;5C", CTRL_DIREITA); // percorrer entre espaços [X]
     define_key("\033[1;5B", CTRL_BAIXO);
 
-    // define_key("\x1B", CTRL_COLCHETE_A); // impossível utilizar
-    define_key("\x1D", CTRL_COLCHETE_F);
-    // define_key("^H", CTRL_BACKSPACE); // talvez não seja possível
-    // define_key("^M", CTRL_ENTER); // talvez não seja possível
+    define_key("\x1D", CTRL_COLCHETE_F); // identar a direita [X]
 
-    define_key("\x18", CTRL_X);
-    define_key("\x16", CTRL_V);
-    define_key("\x03", CTRL_X);
-    define_key("\x02", CTRL_B);
-    define_key("\x01", CTRL_A);
-    define_key("\x0E", CTRL_N);
+    define_key("\x18", CTRL_X); // copiar linha inteira [X]
+    define_key("\x16", CTRL_V); // colar linha copiada [X]
+    define_key("\x02", CTRL_B); // selecionar toda a linha
+    define_key("\x01", CTRL_A); // selecionar todo o arquivo
+    define_key("\x0E", CTRL_N); // novo arquivo
 }

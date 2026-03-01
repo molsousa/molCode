@@ -56,7 +56,7 @@
 
 #### Comandos:
 
-[ ] Salvar sem sair.
+[X] Salvar sem sair.
 
 [ ] Editar nome do arquivo.
 

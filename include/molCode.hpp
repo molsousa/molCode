@@ -100,8 +100,6 @@ protected:
 
     // Método para abrir arquivo.
     void abrir();
-    // Método para salvar arquivo e sair em seguida.
-    void salvar_sair();
     // Método para salvar arquivo.
     void salvar();
 };
