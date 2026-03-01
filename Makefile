@@ -1,4 +1,4 @@
-TARGET=a.out
+TARGET=molCode.out
 CXX=g++
 DEBUG=-g
 OPT=-O0

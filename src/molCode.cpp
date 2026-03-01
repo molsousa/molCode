@@ -1,5 +1,10 @@
 #include "../include/molCode.hpp"
 
+/*
+*   Construtor para inicializar o editor de texto.
+*   Caso tenha outro argumento inserido no terminal
+    o arquivo é inicializado com título.
+*/
 molCode::molCode(const std::string& arquivo)
 {
     x = y = 0;
@@ -14,18 +19,20 @@ molCode::molCode(const std::string& arquivo)
         nome_arquivo = arquivo;
 
     abrir();
-
-    initscr();
-    noecho();
-    cbreak();
+    initscr(); // inicializa ncurses
+    noecho(); // desativa a exibição automática dos caracteres digitados no terminal
+    cbreak(); // os caracteres digitados pelo usuário são enviados pra tela
     keypad(stdscr, true);
-    use_default_colors();
+    use_default_colors(); // cores padrões
 }
 
+/*
+*   Destrutor para finalizar o editor.
+*/
 molCode::~molCode()
 {
-    refresh();
-    endwin();
+    refresh(); // mostrar atualizações na tela
+    endwin(); // finaliza ncurses e volta pro terminal anterior
 }
 
 void molCode::inicializar()
@@ -39,6 +46,7 @@ void molCode::inicializar()
     }
 }
 
+// Método para atualizar estado
 void molCode::atualizar()
 {
     switch(modo){
@@ -58,21 +66,25 @@ void molCode::atualizar()
     estado.insert(0, " ");
 }
 
+// Método para mostrar o estado
 void molCode::linhaDeEstado()
 {
     start_color();
     if(modo == 'n')
-        init_pair(1, COLOR_CYAN, COLOR_BLACK);
+        init_pair(1, COLOR_CYAN, COLOR_BLACK); // cor ciano caso esteja em modo normal
 
     else
-        init_pair(1, COLOR_RED, COLOR_BLACK);
+        init_pair(1, COLOR_RED, COLOR_BLACK); // vermelho caso esteja em modo de inserção
 
     attron(A_REVERSE);
     attron(COLOR_PAIR(1));
+    // TODO lista de comandos
 
     for(int i {}; i < COLS; ++i){
         mvprintw(LINES-1, i, " ");
     }
+
+    // TODO mostrar linhas
 
     mvprintw(LINES - 1, 0, estado.c_str());
     mvprintw(LINES - 1, COLS - sessao.length(), &sessao[0]);
@@ -81,21 +93,27 @@ void molCode::linhaDeEstado()
     attroff(A_REVERSE);
 }
 
+// Método para interpretar entrada do usuário
 void molCode::entrada(int c)
 {
+    // switch para mover cursor, tanto em tela normal quanto em inserção
     switch(c){
+    // mover cursor pra cima
     case KEY_UP:
         cima();
         return;
 
+    // mover cursor pra esquerda
     case KEY_LEFT:
         esquerda();
         return;
 
+    // mover cursor pra direita
     case KEY_RIGHT:
         direita();
         return;
 
+    // mover cursor pra baixo
     case KEY_DOWN:
         baixo();
         return;
@@ -108,9 +126,11 @@ void molCode::entrada(int c)
         case 'q':
             modo = 'q';
             break;
+
         case 'i':
             modo = 'i';
             break;
+
         case 'w':
             modo = 'w';
             salvar();
@@ -125,9 +145,11 @@ void molCode::entrada(int c)
 
     case 'i':
         switch(c){
+        // TODO ctrl+bs
         case 27:
             modo = 'n';
             break;
+
         case KEY_BACKSPACE:
         case 127:
             if(x == 0 && y > 0){
@@ -136,17 +158,17 @@ void molCode::entrada(int c)
                 ch_remover(y);
                 cima();
             }
-            else if(x > 0){
+            else if(x > 0)
                 linhas[y].erase(--x, 1);
-            }
             break;
+
         case KEY_DC:
-            if(x == linhas[y].length() && y != linhas.size() - 1){
+            if(x == linhas[y].length() && y != linhas.size() - 1)
                 linhas[y] += linhas[y + 1];
-            }
-            else{
+
+            else
                 linhas[y].erase(x, 1);
-            }
+
             break;
         case KEY_ENTER:
         case 10:
@@ -154,9 +176,9 @@ void molCode::entrada(int c)
                 ch_inserir(linhas[y].substr(x, linhas[y].length() - x), y+1);
                 linhas[y].erase(x, linhas[y].length()-x);
             }
-            else{
+            else
                 ch_inserir("", y+1);
-            }
+
             x = 0;
             baixo();
             break;
@@ -171,10 +193,9 @@ void molCode::entrada(int c)
             break;
 
         default:
-        {
             linhas[y].insert(x, 1, c);
             ++x;
-        }
+            break;
         }
         break;
     }
@@ -187,9 +208,9 @@ void molCode::imprimir()
             move(i, 0);
             clrtoeol();
         }
-        else{
+        else
             mvprintw(i, 0, linhas[i].c_str());
-        }
+
         clrtoeol();
     }
     move(y, x);
@@ -220,12 +241,11 @@ void molCode::ch_anexo(std::string& linha)
 
 void molCode::cima()
 {
-    if(y > 0){
+    if(y > 0)
         --y;
-    }
-    if(x >= linhas[y].length()){
+
+    if(x >= linhas[y].length())
         x = linhas[y].length();
-    }
 
     move(y, x);
 }
@@ -248,13 +268,11 @@ void molCode::direita()
 
 void molCode::baixo()
 {
-    if(y < ((size_t)LINES) && y < linhas.size() -1){
+    if(y < ((size_t)LINES) && y < linhas.size() -1)
         ++y;
-    }
 
-    if(x >= linhas[y].length()){
+    if(x >= linhas[y].length())
         x = linhas[y].length();
-    }
 
     move(y, x);
 }
@@ -286,9 +304,9 @@ void molCode::salvar()
     std::ofstream ofile(nome_arquivo);
 
     if(ofile.is_open()){
-        for(size_t i{}; i < linhas.size(); ++i){
+        for(size_t i{}; i < linhas.size(); ++i)
             ofile << linhas[i] << '\n';
-        }
+
         ofile.close();
     }
     else{
