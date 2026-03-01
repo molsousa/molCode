@@ -1,4 +1,7 @@
-*.layout
-*.cbp
-*.depend
-*.out
+*
+
+!*/
+
+!**/*.cpp
+!**/*.hpp
+!Makefile
