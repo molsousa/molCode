@@ -62,6 +62,10 @@ void molCode::atualizar()
         estado = MODO_INSERIR;
         break;
 
+    case 's':
+        estado = MODO_SALVAR;
+        break;
+
     case 'q':
         break;
     }
@@ -77,8 +81,11 @@ void molCode::linhaDeEstado()
     if(modo == 'n')
         init_pair(1, COLOR_CYAN, COLOR_BLACK); // cor ciano caso esteja em modo normal
 
-    else
+    else if(modo == 'i')
         init_pair(1, COLOR_RED, COLOR_BLACK); // vermelho caso esteja em modo de inserção
+
+    else
+        init_pair(1, COLOR_WHITE, COLOR_BLACK);
 
     attron(A_REVERSE);
     attron(COLOR_PAIR(1));
@@ -146,6 +153,16 @@ void molCode::entrada(int c)
             exit(0);
             break;
 
+        case 's':
+            modo = 's';
+            salvar();
+            atualizar();
+            linhaDeEstado();
+            imprimir();
+            napms(1500);
+            modo = 'n';
+            break;
+
         // move o cursor para o final do arquivo
         case KEY_END:
             y = linhas.size()-1;
@@ -176,6 +193,28 @@ void molCode::entrada(int c)
             x = 0;
 
             move(y, x);
+            break;
+
+        // copia uma linha inteira
+        case CTRL_X:
+            copia = linhas[y];
+            break;
+
+
+        case CTRL_ESQUERDA:
+
+            break;
+
+        // mover cursor a cada substring separada por espaço
+        case CTRL_DIREITA:
+            x = linhas[y].find(ESPACO, x+1);
+
+            if(x < linhas[y].length())
+                move(y, x);
+
+            else
+                x = linhas[y].length();
+
             break;
         }
         break;
@@ -269,7 +308,6 @@ void molCode::entrada(int c)
         // copia uma linha inteira
         case CTRL_X:
             copia = linhas[y];
-
             break;
 
         // cola a string copiada
@@ -277,8 +315,20 @@ void molCode::entrada(int c)
             linhas[y].insert(x, copia);
             break;
 
+        // insere tabulação no início da string
         case CTRL_COLCHETE_F:
-            linhas[y].insert(x, copia);
+            linhas[y].insert(0, "   ");
+            break;
+
+        case CTRL_DIREITA:
+            x = linhas[y].find(ESPACO, x+1);
+
+            if(x < linhas[y].length())
+                move(y, x);
+
+            else
+                x = linhas[y].length();
+
             break;
 
         default:
@@ -456,6 +506,29 @@ void molCode::salvar_sair()
     if(ofile.is_open()){
         for(size_t i{}; i < linhas.size(); ++i){
             ofile << linhas[i]; // salva no arquivo de saída
+
+            // Não insere enter ao final do arquivo
+            if(i < linhas.size()-1)
+                ofile << '\n';
+        }
+
+        ofile.close();
+    }
+    else{ // joga exceção caso o arquivo tenha permissão especial para não modificar
+        refresh();
+        endwin();
+        throw std::runtime_error("Não é possível abrir o arquivo. Permissão negada");
+    }
+}
+
+// Método para salvar sem sair
+void molCode::salvar()
+{
+    std::ofstream ofile(nome_arquivo);
+
+    if(ofile.is_open()){
+        for(size_t i{}; i < linhas.size(); ++i){
+            ofile << linhas[i]; // salva o arquivo
 
             // Não insere enter ao final do arquivo
             if(i < linhas.size()-1)

@@ -28,7 +28,7 @@
 
 [ ] Ctrl + [: Identar linha a esquerda.
 
-[ ] Ctrl + ]: Identar linha a direita.
+[X] Ctrl + ]: Identar linha a direita.
 
 [ ] Ctrl + N: Novo arquivo em fila.
 
@@ -46,7 +46,7 @@
 
 #### Detalhes visuais:
 
-[ ] Mostrar linhas.
+[X] Mostrar linhas.
 
 [X] Permitir entradas fora do intervalo ASCII.
 

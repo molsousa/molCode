@@ -13,6 +13,7 @@
 #define SEM_TITULO "sem_titulo"
 #define MODO_NORMAL "NORMAL"
 #define MODO_INSERIR "INSERIR"
+#define MODO_SALVAR "SALVO"
 #define STRING_VAZIA ""
 #define ESPACO " "
 
@@ -101,4 +102,6 @@ protected:
     void abrir();
     // Método para salvar arquivo e sair em seguida.
     void salvar_sair();
+    // Método para salvar arquivo.
+    void salvar();
 };
