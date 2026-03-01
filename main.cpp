@@ -8,7 +8,7 @@ int main(int argc, char **argv)
         code->inicializar();
     }
     else{
-        auto code = std::make_shared<molCode>("");
+        auto code = std::make_shared<molCode>(STRING_VAZIA);
         code->inicializar();
     }
 

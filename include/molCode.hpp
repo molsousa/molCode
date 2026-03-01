@@ -8,6 +8,14 @@
 #include <filesystem>
 #include <fstream>
 
+#define SEM_TITULO "sem_titulo"
+#define MODO_NORMAL "NORMAL"
+#define MODO_INSERIR "INSERIR"
+#define STRING_VAZIA ""
+#define ESPACO " "
+
+#define ESC 27
+
 class molCode
 {
 private:

@@ -9,11 +9,11 @@ molCode::molCode(const std::string& arquivo)
 {
     x = y = 0;
     modo = 'n';
-    estado = "NORMAL";
-    sessao = "";
+    estado = MODO_NORMAL;
+    sessao = STRING_VAZIA;
 
     if(arquivo.empty())
-        nome_arquivo = "sem_titulo";
+        nome_arquivo = SEM_TITULO;
 
     else
         nome_arquivo = arquivo;
@@ -51,11 +51,11 @@ void molCode::atualizar()
 {
     switch(modo){
     case 'n':
-        estado = "NORMAL";
+        estado = MODO_NORMAL;
         break;
 
     case 'i':
-        estado = "INSERIR";
+        estado = MODO_INSERIR;
         break;
 
     case 'q':
@@ -63,7 +63,7 @@ void molCode::atualizar()
     }
 
     sessao = " COLUNAS: " + std::to_string(x) + " | LINHAS: " + std::to_string(y) + " | ARQUIVO: " + nome_arquivo;
-    estado.insert(0, " ");
+    estado.insert(0, ESPACO);
 }
 
 // Método para mostrar o estado
@@ -80,9 +80,8 @@ void molCode::linhaDeEstado()
     attron(COLOR_PAIR(1));
     // TODO lista de comandos
 
-    for(int i {}; i < COLS; ++i){
-        mvprintw(LINES-1, i, " ");
-    }
+    for(int i {}; i < COLS; ++i)
+        mvprintw(LINES-1, i, ESPACO);
 
     // TODO mostrar linhas
 
@@ -120,7 +119,7 @@ void molCode::entrada(int c)
     }
 
     switch(modo){
-    case 27:
+    case ESC:
     case 'n':
         switch(c){
         case 'q':
@@ -136,9 +135,35 @@ void molCode::entrada(int c)
             salvar();
             refresh();
             endwin();
-            std::printf("Salvo");
+            std::printf("Salvo.");
             exit(0);
             // TODO salvar sem sair
+            break;
+
+        case KEY_END:
+            y = linhas.size()-1;
+            x = linhas[y].length();
+
+            move(y, x);
+            break;
+
+        case KEY_HOME:
+            x = 0;
+            y = 0;
+
+            move(y, x);
+            break;
+
+        case KEY_NPAGE:
+            x = linhas[y].length();
+
+            move(y, x);
+            break;
+
+        case KEY_PPAGE:
+            x = 0;
+
+            move(y, x);
             break;
         }
         break;
@@ -146,7 +171,7 @@ void molCode::entrada(int c)
     case 'i':
         switch(c){
         // TODO ctrl+bs
-        case 27:
+        case ESC:
             modo = 'n';
             break;
 
@@ -177,7 +202,7 @@ void molCode::entrada(int c)
                 linhas[y].erase(x, linhas[y].length()-x);
             }
             else
-                ch_inserir("", y+1);
+                ch_inserir(STRING_VAZIA, y+1);
 
             x = 0;
             baixo();
@@ -188,8 +213,34 @@ void molCode::entrada(int c)
         case KEY_STAB:
         case KEY_CATAB:
         case 9:
-            linhas[y].insert(x, 2, ' ');
-            x += 2;
+            linhas[y].insert(x, 3, ' ');
+            x += 3;
+            break;
+
+        case KEY_END:
+            y = linhas.size()-1;
+            x = linhas[y].length();
+
+            move(y, x);
+            break;
+
+        case KEY_HOME:
+            x = 0;
+            y = 0;
+
+            move(y, x);
+            break;
+
+        case KEY_NPAGE:
+            x = linhas[y].length();
+
+            move(y, x);
+            break;
+
+        case KEY_PPAGE:
+            x = 0;
+
+            move(y, x);
             break;
 
         default:
@@ -256,6 +307,13 @@ void molCode::esquerda()
         --x;
         move(y, x);
     }
+    else{
+        if(y > 0){
+            --y;
+            x = linhas[y].length();
+            move(y, x);
+        }
+    }
 }
 
 void molCode::direita()
@@ -263,6 +321,14 @@ void molCode::direita()
     if(x <= ((size_t)COLS) && x <= linhas[y].length()-1){
         ++x;
         move(y, x);
+    }
+    else{
+        if(y < linhas.size()){
+            y++;
+            x = 0;
+
+            move(y, x);
+        }
     }
 }
 
