@@ -16,9 +16,9 @@
 
 [X] Definição de todas as constantes necessárias.
 
-[ ] Ctrl + X: Para copiar uma linha.
+[X] Ctrl + X: Para copiar uma linha.
 
-[ ] Ctrl + V: Para colar uma linha.
+[X] Ctrl + V: Para colar uma linha.
 
 [ ] Ctrl + BS: Para apagar uma string continua.
 

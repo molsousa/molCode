@@ -21,13 +21,16 @@
 #define CTRL_ESQUERDA 0x271
 #define CTRL_DIREITA 0x272
 #define CTRL_BAIXO 0x273
-#define CTRL_CHAVE_A 0x274
-#define CTRL_CHAVE_F 0x275
+#define CTRL_COLCHETE_A 0x274
+#define CTRL_COLCHETE_F 0x275
 #define CTRL_BACKSPACE 0x276
 #define CTRL_ENTER 0x277
-#define CTRL_A 1
-#define CTRL_B 2
-#define CTRL_N 14
+#define CTRL_X 0x278
+#define CTRL_V 0x279
+#define CTRL_C 0x27A
+#define CTRL_A 0x27B
+#define CTRL_B 0x27C
+#define CTRL_N 0x27D
 #define ESC 27
 
 class molCode
@@ -37,6 +40,7 @@ private:
     char modo;
     std::string nome_arquivo, estado, sessao;
     std::vector<std::string> linhas;
+    std::string copia;
     size_t total_linhas, scroll_offset;
 
     // Método para remover um caractere

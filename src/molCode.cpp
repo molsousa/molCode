@@ -13,7 +13,7 @@ molCode::molCode(const std::string& arquivo)
     scroll_offset = 0;
     modo = 'n';
     estado = MODO_NORMAL;
-    sessao = STRING_VAZIA;
+    copia = sessao = STRING_VAZIA;
 
     if(arquivo.empty())
         nome_arquivo = SEM_TITULO;
@@ -266,6 +266,21 @@ void molCode::entrada(int c)
             move(y, x);
             break;
 
+        // copia uma linha inteira
+        case CTRL_X:
+            copia = linhas[y];
+
+            break;
+
+        // cola a string copiada
+        case CTRL_V:
+            linhas[y].insert(x, copia);
+            break;
+
+        case CTRL_COLCHETE_F:
+            linhas[y].insert(x, copia);
+            break;
+
         default:
             linhas[y].insert(x, 1, c);
             ++x;
@@ -464,8 +479,15 @@ void molCode::definir_constantes()
     define_key("\033[1;5C", CTRL_DIREITA);
     define_key("\033[1;5B", CTRL_BAIXO);
 
-    define_key("^[", CTRL_CHAVE_A);
-    define_key("^]", CTRL_CHAVE_F);
-    define_key("^H", CTRL_BACKSPACE);
-    define_key("^M", CTRL_ENTER);
+    // define_key("\x1B", CTRL_COLCHETE_A); // impossível utilizar
+    define_key("\x1D", CTRL_COLCHETE_F);
+    // define_key("^H", CTRL_BACKSPACE); // talvez não seja possível
+    // define_key("^M", CTRL_ENTER); // talvez não seja possível
+
+    define_key("\x18", CTRL_X);
+    define_key("\x16", CTRL_V);
+    define_key("\x03", CTRL_X);
+    define_key("\x02", CTRL_B);
+    define_key("\x01", CTRL_A);
+    define_key("\x0E", CTRL_N);
 }
