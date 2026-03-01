@@ -7,6 +7,8 @@
 */
 molCode::molCode(const std::string& arquivo)
 {
+    setlocale(LC_ALL, STRING_VAZIA);
+
     x = y = 0;
     modo = 'n';
     estado = MODO_NORMAL;
@@ -26,15 +28,14 @@ molCode::molCode(const std::string& arquivo)
     use_default_colors(); // cores padrões
 }
 
-/*
-*   Destrutor para finalizar o editor.
-*/
+// Destrutor para finalizar o editor.
 molCode::~molCode()
 {
     refresh(); // mostrar atualizações na tela
     endwin(); // finaliza ncurses e volta pro terminal anterior
 }
 
+// Método para inicializar ncurses
 void molCode::inicializar()
 {
     while(modo != 'q'){
@@ -46,7 +47,7 @@ void molCode::inicializar()
     }
 }
 
-// Método para atualizar estado
+// Método para atualizar estado.
 void molCode::atualizar()
 {
     switch(modo){
@@ -66,7 +67,7 @@ void molCode::atualizar()
     estado.insert(0, ESPACO);
 }
 
-// Método para mostrar o estado
+// Método para mostrar o estado.
 void molCode::linhaDeEstado()
 {
     start_color();
@@ -92,7 +93,7 @@ void molCode::linhaDeEstado()
     attroff(A_REVERSE);
 }
 
-// Método para interpretar entrada do usuário
+// Método para interpretar entrada do usuário.
 void molCode::entrada(int c)
 {
     // switch para mover cursor, tanto em tela normal quanto em inserção
@@ -122,24 +123,27 @@ void molCode::entrada(int c)
     case ESC:
     case 'n':
         switch(c){
+        // finaliza o editor
         case 'q':
             modo = 'q';
             break;
 
+        // ativa o modo inserção
         case 'i':
             modo = 'i';
             break;
 
+        // salva e finaliza o editor
         case 'w':
             modo = 'w';
-            salvar();
+            salvar_sair();
             refresh();
             endwin();
             std::printf("Salvo.");
             exit(0);
-            // TODO salvar sem sair
             break;
 
+        // move o cursor para o final do arquivo
         case KEY_END:
             y = linhas.size()-1;
             x = linhas[y].length();
@@ -147,6 +151,7 @@ void molCode::entrada(int c)
             move(y, x);
             break;
 
+        // move o cursor para a primeira linha da primeira coluna
         case KEY_HOME:
             x = 0;
             y = 0;
@@ -154,12 +159,14 @@ void molCode::entrada(int c)
             move(y, x);
             break;
 
+        // move o cursor para a última coluna da linha atual
         case KEY_NPAGE:
             x = linhas[y].length();
 
             move(y, x);
             break;
 
+        // move o cursor para a primeira coluna da linha atual
         case KEY_PPAGE:
             x = 0;
 
@@ -170,14 +177,15 @@ void molCode::entrada(int c)
 
     case 'i':
         switch(c){
-        // TODO ctrl+bs
+        // retorna ao modo normal
         case ESC:
             modo = 'n';
             break;
 
+        // configuração para backspace
         case KEY_BACKSPACE:
         case 127:
-            if(x == 0 && y > 0){
+            if(x == 0 && y > 0){ // caso y > 0, então move o cursor para a linha anterior
                 x = linhas[y-1].length();
                 linhas[y-1] += linhas[y];
                 ch_remover(y);
@@ -187,17 +195,20 @@ void molCode::entrada(int c)
                 linhas[y].erase(--x, 1);
             break;
 
+        // configuração para delete
         case KEY_DC:
             if(x == linhas[y].length() && y != linhas.size() - 1)
-                linhas[y] += linhas[y + 1];
+                linhas[y] += linhas[y + 1]; // puxa a linha de baixo para cima
 
             else
                 linhas[y].erase(x, 1);
 
             break;
+
+        // configuração para enter
         case KEY_ENTER:
         case 10:
-            if(x < linhas[y].length()){
+            if(x < linhas[y].length()){ // quebra linha e move os caracteres para a próxima linha
                 ch_inserir(linhas[y].substr(x, linhas[y].length() - x), y+1);
                 linhas[y].erase(x, linhas[y].length()-x);
             }
@@ -208,15 +219,17 @@ void molCode::entrada(int c)
             baixo();
             break;
 
+        // configuração para tabulação
         case KEY_BTAB:
         case KEY_CTAB:
         case KEY_STAB:
         case KEY_CATAB:
         case 9:
-            linhas[y].insert(x, 3, ' ');
+            linhas[y].insert(x, 3, ' '); // insere 3 espaços
             x += 3;
             break;
 
+        // move o cursor para o final do arquivo
         case KEY_END:
             y = linhas.size()-1;
             x = linhas[y].length();
@@ -224,6 +237,7 @@ void molCode::entrada(int c)
             move(y, x);
             break;
 
+        // move o cursor para a primeira linha da primeira coluna
         case KEY_HOME:
             x = 0;
             y = 0;
@@ -231,12 +245,14 @@ void molCode::entrada(int c)
             move(y, x);
             break;
 
+        // move o cursor para a última coluna da linha atual
         case KEY_NPAGE:
             x = linhas[y].length();
 
             move(y, x);
             break;
 
+        // move o cursor para a primeira coluna da linha atual
         case KEY_PPAGE:
             x = 0;
 
@@ -252,6 +268,11 @@ void molCode::entrada(int c)
     }
 }
 
+/*
+*   Método para desenhar o conteúdo do buffer na tela
+*   Caso tenha linhas não existentes no buffer, limpa
+*   Cursor fica na posição original
+*/
 void molCode::imprimir()
 {
     for(size_t i {}; i < (size_t) LINES-1; ++i){
@@ -267,29 +288,34 @@ void molCode::imprimir()
     move(y, x);
 }
 
+// Método para remover um caractere
 void molCode::ch_remover(int numero)
 {
     linhas.erase(linhas.begin() + numero);
 }
 
+// Método para manipular tab
 std::string molCode::ch_tabs(std::string& linha)
 {
     std::size_t tab = linha.find('\t');
-    return (tab == linha.npos) ? linha : ch_tabs(linha.replace(tab, 1, "  "));
+    return (tab == linha.npos) ? linha : ch_tabs(linha.replace(tab, 1, "   "));
 }
 
+// Método para inserir caractere no meio da linha
 void molCode::ch_inserir(std::string linha, int numero)
 {
     linha = ch_tabs(linha);
     linhas.insert(linhas.begin() + numero, linha);
 }
 
+// Método para inserir ao final da linha
 void molCode::ch_anexo(std::string& linha)
 {
     linha = ch_tabs(linha);
     linhas.push_back(linha);
 }
 
+// Método para mover cursor pra cima.
 void molCode::cima()
 {
     if(y > 0)
@@ -301,6 +327,11 @@ void molCode::cima()
     move(y, x);
 }
 
+/*
+*   Método para mover cursor para a esquerda.
+*   Caso o cursor chegue no início da coluna e tenha texto
+    acima, o cursor é movido pra cima na última linha.
+*/
 void molCode::esquerda()
 {
     if(x > 0){
@@ -308,7 +339,7 @@ void molCode::esquerda()
         move(y, x);
     }
     else{
-        if(y > 0){
+        if(y > 0){ // caso tenha linhas acima
             --y;
             x = linhas[y].length();
             move(y, x);
@@ -316,6 +347,11 @@ void molCode::esquerda()
     }
 }
 
+/*
+*   Método para mover cursor para a direita.
+*   Caso o cursor chegue ao final da coluna e tenha texto
+    abaixo, o cursor é movido pro início da próxima linha.
+*/
 void molCode::direita()
 {
     if(x <= ((size_t)COLS) && x <= linhas[y].length()-1){
@@ -323,7 +359,7 @@ void molCode::direita()
         move(y, x);
     }
     else{
-        if(y < linhas.size()){
+        if(y < linhas.size()-1){ // caso tenha linhas anbaixo
             y++;
             x = 0;
 
@@ -332,6 +368,7 @@ void molCode::direita()
     }
 }
 
+// Método para mover cursor pra baixo.
 void molCode::baixo()
 {
     if(y < ((size_t)LINES) && y < linhas.size() -1)
@@ -343,6 +380,7 @@ void molCode::baixo()
     move(y, x);
 }
 
+// Método para abrir arquivo.
 void molCode::abrir()
 {
     if(std::filesystem::exists(nome_arquivo)){
@@ -351,31 +389,37 @@ void molCode::abrir()
         if(ifile.is_open()){
             while(!ifile.eof()){
                 std::string buffer;
-                std::getline(ifile, buffer);
+                std::getline(ifile, buffer); // caso tenha texto reinsere para não perder dados
 
                 ch_anexo(buffer);
             }
         }
-        else
+        else // joga exceção caso o arquivo tenha permissão especial para não modificar
             throw std::runtime_error("Não é possível abrir o arquivo. Permissão negada");
     }
     else{
         std::string str {};
-        ch_anexo(str);
+        ch_anexo(str); // não existindo o arquivo, cria o arquivo vazio
     }
 }
 
-void molCode::salvar()
+// Método para salvar arquivo e sair em seguida.
+void molCode::salvar_sair()
 {
     std::ofstream ofile(nome_arquivo);
 
     if(ofile.is_open()){
-        for(size_t i{}; i < linhas.size(); ++i)
-            ofile << linhas[i] << '\n';
+        for(size_t i{}; i < linhas.size(); ++i){
+            ofile << linhas[i]; // salva no arquivo de saída
+
+            // Não insere enter ao final do arquivo
+            if(i < linhas.size()-1)
+                ofile << '\n';
+        }
 
         ofile.close();
     }
-    else{
+    else{ // joga exceção caso o arquivo tenha permissão especial para não modificar
         refresh();
         endwin();
         throw std::runtime_error("Não é possível abrir o arquivo. Permissão negada");

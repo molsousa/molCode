@@ -46,7 +46,11 @@
 
 [ ] Mostrar linhas.
 
-[ ] Permitir entradas fora do intervalo ASCII.
+[X] Permitir entradas fora do intervalo ASCII.
+
+[ ] Corrigir bugs visuais no editor com entradas fora do intervalo ASCII.
+
+[ ] Mostrar linha de comandos.
 
 #### Comandos:
 
@@ -56,10 +60,6 @@
 
 [ ] Localizar caminho absoluto.
 
-[ ] Remover quebra de linha apos salvar e sair.
+[X] Remover quebra de linha apos salvar e sair.
 
 [ ] Movimentacao apos o final da pagina.
-
-[ ] Mostrar linha de comandos.
-
-
