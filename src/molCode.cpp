@@ -150,6 +150,7 @@ void molCode::entrada(int c)
         case KEY_END:
             y = linhas.size()-1;
             x = linhas[y].length();
+            scroll_offset = linhas.size() - (LINES-1);
 
             imprimir();
             break;
@@ -158,6 +159,7 @@ void molCode::entrada(int c)
         case KEY_HOME:
             x = 0;
             y = 0;
+            scroll_offset = 0;
 
             imprimir();
             break;
@@ -236,6 +238,7 @@ void molCode::entrada(int c)
         case KEY_END:
             y = linhas.size()-1;
             x = linhas[y].length();
+            scroll_offset = linhas.size() - (LINES-1);
 
             imprimir();
             break;
@@ -244,6 +247,7 @@ void molCode::entrada(int c)
         case KEY_HOME:
             x = 0;
             y = 0;
+            scroll_offset = 0;
 
             imprimir();
             break;
@@ -392,13 +396,12 @@ void molCode::direita()
 // Método para mover cursor pra baixo.
 void molCode::baixo()
 {
-    if(y < linhas.size() - 1) {
+    if(y < linhas.size() - 1){
         ++y;
 
         int linhas_visiveis = LINES - 1;
-        if(y >= scroll_offset + linhas_visiveis) {
+        if(y >= scroll_offset + linhas_visiveis)
             scroll_offset = y - linhas_visiveis + 1;
-        }
     }
 
     if(x >= linhas[y].length())

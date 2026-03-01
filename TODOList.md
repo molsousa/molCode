@@ -62,4 +62,4 @@
 
 [X] Remover quebra de linha apos salvar e sair.
 
-[ ] Movimentacao apos o final da pagina.
+[X] Movimentacao apos o final da pagina.
