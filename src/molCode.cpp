@@ -10,6 +10,7 @@ molCode::molCode(const std::string& arquivo)
     setlocale(LC_ALL, STRING_VAZIA);
 
     x = y = 0;
+    scroll_offset = 0;
     modo = 'n';
     estado = MODO_NORMAL;
     sessao = STRING_VAZIA;
@@ -21,7 +22,8 @@ molCode::molCode(const std::string& arquivo)
         nome_arquivo = arquivo;
 
     abrir();
-    initscr(); // inicializa ncurses
+    initscr(); // inicializa ncurse
+    raw();
     noecho(); // desativa a exibição automática dos caracteres digitados no terminal
     cbreak(); // os caracteres digitados pelo usuário são enviados pra tela
     keypad(stdscr, true);
@@ -149,7 +151,7 @@ void molCode::entrada(int c)
             y = linhas.size()-1;
             x = linhas[y].length();
 
-            move(y, x);
+            imprimir();
             break;
 
         // move o cursor para a primeira linha da primeira coluna
@@ -157,7 +159,7 @@ void molCode::entrada(int c)
             x = 0;
             y = 0;
 
-            move(y, x);
+            imprimir();
             break;
 
         // move o cursor para a última coluna da linha atual
@@ -235,7 +237,7 @@ void molCode::entrada(int c)
             y = linhas.size()-1;
             x = linhas[y].length();
 
-            move(y, x);
+            imprimir();
             break;
 
         // move o cursor para a primeira linha da primeira coluna
@@ -243,7 +245,7 @@ void molCode::entrada(int c)
             x = 0;
             y = 0;
 
-            move(y, x);
+            imprimir();
             break;
 
         // move o cursor para a última coluna da linha atual
@@ -277,16 +279,30 @@ void molCode::entrada(int c)
 void molCode::imprimir()
 {
     for(size_t i {}; i < (size_t) LINES-1; ++i){
-        if(i >= linhas.size()){
-            move(i, 0);
-            clrtoeol();
-        }
-        else
-            mvprintw(i, 0, linhas[i].c_str());
-
+        move(i, 0);
         clrtoeol();
     }
-    move(y, x);
+
+    int linhas_visiveis = LINES-1;
+
+    for(size_t i {}; i < (size_t) linhas_visiveis; ++i){
+        size_t linha = scroll_offset+i;
+
+        if(linha < linhas.size())
+            mvprintw(i, 0, linhas[linha].c_str());
+    }
+
+    int cursor_y = y - scroll_offset;
+
+    if(cursor_y >= 0 && cursor_y < linhas_visiveis)
+        move(cursor_y, x);
+
+    else{
+        cursor_y = (cursor_y < 0) ? 0 : linhas_visiveis-1;
+        move(cursor_y, x);
+    }
+
+    refresh();
 }
 
 // Método para remover um caractere
@@ -319,13 +335,17 @@ void molCode::ch_anexo(std::string& linha)
 // Método para mover cursor pra cima.
 void molCode::cima()
 {
-    if(y > 0)
+    if(y > 0){
         --y;
+
+        if(y < scroll_offset)
+            scroll_offset = y;
+    }
 
     if(x >= linhas[y].length())
         x = linhas[y].length();
 
-    move(y, x);
+    imprimir();
 }
 
 /*
@@ -372,13 +392,19 @@ void molCode::direita()
 // Método para mover cursor pra baixo.
 void molCode::baixo()
 {
-    if(y < ((size_t)LINES) && y < linhas.size() -1)
+    if(y < linhas.size() - 1) {
         ++y;
+
+        int linhas_visiveis = LINES - 1;
+        if(y >= scroll_offset + linhas_visiveis) {
+            scroll_offset = y - linhas_visiveis + 1;
+        }
+    }
 
     if(x >= linhas[y].length())
         x = linhas[y].length();
 
-    move(y, x);
+    imprimir();
 }
 
 // Método para abrir arquivo.

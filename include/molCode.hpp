@@ -30,6 +30,7 @@ private:
     char modo;
     std::string nome_arquivo, estado, sessao;
     std::vector<std::string> linhas;
+    size_t total_linhas, scroll_offset;
 
     // Método para remover um caractere
     void ch_remover(int);
