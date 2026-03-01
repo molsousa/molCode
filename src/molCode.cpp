@@ -84,8 +84,8 @@ void molCode::linhaDeEstado()
     else if(modo == 'i')
         init_pair(1, COLOR_RED, COLOR_BLACK); // vermelho caso esteja em modo de inserção
 
-    else
-        init_pair(1, COLOR_WHITE, COLOR_BLACK);
+    else if(modo == 's')
+        init_pair(1, COLOR_WHITE, COLOR_BLACK); // cor branca pra salvar
 
     attron(A_REVERSE);
     attron(COLOR_PAIR(1));
@@ -93,8 +93,6 @@ void molCode::linhaDeEstado()
 
     for(int i {}; i < COLS; ++i)
         mvprintw(LINES-1, i, ESPACO);
-
-    // TODO mostrar linhas
 
     mvprintw(LINES - 1, 0, estado.c_str());
     mvprintw(LINES - 1, COLS - sessao.length(), &sessao[0]);
@@ -163,6 +161,46 @@ void molCode::entrada(int c)
             napms(1500);
             modo = 'n';
             break;
+
+        case 'r':
+            {
+                std::string novo_nome = "";
+                int ch;
+                size_t i = 0;
+                move(LINES-1, 0);
+                clrtoeol();
+
+                while((ch = getch()) != '\n'){
+                    switch(ch){
+                        case KEY_BACKSPACE:
+                        case 127:
+                        case '\b':
+                            if(i > 0){
+                                novo_nome.erase(--i, 1);
+                                move(LINES, i);
+                                mvprintw(LINES - 1, 0, ":%s", novo_nome.c_str());
+                                refresh();
+                            }
+                            break;
+                        default:
+                            if(CARACTERES_VALIDOS)
+                                novo_nome.insert(i++, 1, ch);
+                            break;
+                    }
+
+                    move(LINES, i);
+                    clrtoeol();
+
+                    mvprintw(LINES - 1, 0, ":%s", novo_nome.c_str());
+                    move(LINES, i+1);
+
+                    refresh();
+
+                }
+                editar_nome(novo_nome);
+
+                break;
+            }
 
         // move o cursor para o final do arquivo
         case KEY_END:
@@ -499,7 +537,13 @@ void molCode::abrir()
     }
 }
 
-// Método para salvar arquivo e sair em seguida.
+void molCode::editar_nome(std::string& novo_nome)
+{
+    rename(&nome_arquivo[0], &novo_nome[0]);
+    nome_arquivo = novo_nome;
+}
+
+// Método para salvar arquivo.
 void molCode::salvar()
 {
     std::ofstream ofile(nome_arquivo);

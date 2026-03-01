@@ -14,6 +14,7 @@
 #define MODO_NORMAL "NORMAL"
 #define MODO_INSERIR "INSERIR"
 #define MODO_SALVAR "SALVO"
+#define MODO_EDICAO "EDITAR"
 #define STRING_VAZIA ""
 #define ESPACO " "
 
@@ -33,6 +34,8 @@
 #define CTRL_B 0x27C
 #define CTRL_N 0x27D
 #define ESC 27
+
+#define CARACTERES_VALIDOS ((ch >= 65 && ch <= 90) || (ch >= 97 && ch <= 122) || (ch >= '0' && ch <= '9') || (ch == '.') || (ch == '_'))
 
 class molCode
 {
@@ -100,6 +103,8 @@ protected:
 
     // Método para abrir arquivo.
     void abrir();
+    // Método para editar nome do arquivo.
+    void editar_nome(std::string&);
     // Método para salvar arquivo.
     void salvar();
 };

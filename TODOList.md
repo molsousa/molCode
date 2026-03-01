@@ -58,7 +58,7 @@
 
 [X] Salvar sem sair.
 
-[ ] Editar nome do arquivo.
+[X] Editar nome do arquivo.
 
 [ ] Localizar caminho absoluto.
 
