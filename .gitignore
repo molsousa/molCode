@@ -5,3 +5,4 @@
 !**/*.cpp
 !**/*.hpp
 !Makefile
+!*.md
