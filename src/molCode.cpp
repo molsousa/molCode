@@ -463,4 +463,9 @@ void molCode::definir_constantes()
     define_key("\033[1;5D", CTRL_ESQUERDA);
     define_key("\033[1;5C", CTRL_DIREITA);
     define_key("\033[1;5B", CTRL_BAIXO);
+
+    define_key("^[", CTRL_CHAVE_A);
+    define_key("^]", CTRL_CHAVE_F);
+    define_key("^H", CTRL_BACKSPACE);
+    define_key("^M", CTRL_ENTER);
 }

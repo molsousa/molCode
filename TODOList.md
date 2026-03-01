@@ -14,6 +14,8 @@
 
 #### Atribuicoes de teclas:
 
+[X] Definição de todas as constantes necessárias.
+
 [ ] Ctrl + X: Para copiar uma linha.
 
 [ ] Ctrl + V: Para colar uma linha.

@@ -17,11 +17,18 @@
 #define ESPACO " "
 
 // Definição de macros para valores numéricos
-#define ESC 27
 #define CTRL_CIMA 0x270
 #define CTRL_ESQUERDA 0x271
 #define CTRL_DIREITA 0x272
 #define CTRL_BAIXO 0x273
+#define CTRL_CHAVE_A 0x274
+#define CTRL_CHAVE_F 0x275
+#define CTRL_BACKSPACE 0x276
+#define CTRL_ENTER 0x277
+#define CTRL_A 1
+#define CTRL_B 2
+#define CTRL_N 14
+#define ESC 27
 
 class molCode
 {
