@@ -58,6 +58,10 @@ private:
     // Método para definição de constantes
     void definir_constantes();
 
+    void selecionar_linha(char);
+
+    void selecionar_todas_linhas(char);
+
 public:
     /*
     *   Construtor para inicializar o editor de texto.

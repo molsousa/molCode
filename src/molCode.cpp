@@ -89,17 +89,16 @@ void molCode::linhaDeEstado()
 
     attron(A_REVERSE);
     attron(COLOR_PAIR(1));
-    // TODO lista de comandos
 
     for(int i {}; i < COLS; ++i){
         mvprintw(LINES-1, i, ESPACO);
     }
 
     if(modo == 'n')
-        mvprintw(LINES - 1, (int)estado.length(), " | W=Salvar e Sair | S=Salvar | I=Inserir | Q=Sair");
+        mvprintw(LINES - 1, (int)estado.length(), " | W=Salvar e Sair | P=Caminho | S=Salvar | I=Inserir | Q=Sair");
 
     else if(modo == 'i')
-        mvprintw(LINES - 1, (int)estado.length(), " | ESC=Modo Normal");
+        mvprintw(LINES - 1, (int)estado.length(), " | ESC=Normal | CTRL+X=Copiar | CTRL+V=Colar");
 
     mvprintw(LINES - 1, 0, estado.c_str());
     mvprintw(LINES - 1, COLS - sessao.length(), &sessao[0]);
@@ -277,6 +276,16 @@ void molCode::entrada(int c)
                 x = linhas[y].length();
 
             break;
+
+        case CTRL_B:
+            selecionar_linha('n');
+
+            break;
+
+        case CTRL_A:
+            selecionar_todas_linhas('n');
+
+            break;
         }
         break;
 
@@ -390,6 +399,16 @@ void molCode::entrada(int c)
 
             else
                 x = linhas[y].length();
+
+            break;
+
+        case CTRL_B:
+            selecionar_linha('i');
+
+            break;
+
+        case CTRL_A:
+            selecionar_todas_linhas('i');
 
             break;
 
@@ -613,3 +632,66 @@ void molCode::definir_constantes()
     define_key("\x01", CTRL_A); // selecionar todo o arquivo
     define_key("\x0E", CTRL_N); // novo arquivo
 }
+
+void molCode::selecionar_linha(char modo_atual)
+{
+    init_pair(1, COLOR_WHITE, COLOR_BLACK);
+
+    attron(A_REVERSE);
+    attron(COLOR_PAIR(1));
+
+    clrtoeol();
+
+    mvprintw(y-scroll_offset, x, linhas[y].c_str());
+
+    refresh();
+
+    int ch;
+    ch = getch();
+
+    switch(ch){
+        case CTRL_X:
+            copia = linhas[y];
+
+            break;
+
+        case KEY_BACKSPACE:
+            if(modo_atual == 'i'){
+                x = linhas[y].length();
+
+                if(y+1 < linhas.size())
+                    linhas[y] += linhas[y+1];
+
+                ch_remover(y);
+                cima();
+            }
+            break;
+
+        default:
+            break;
+    }
+
+    attroff(COLOR_PAIR(1));
+    attroff(A_REVERSE);
+}
+
+/*
+void molCode::selecionar_todas_linhas(char modo_atual)
+{
+    init_pair(1, COLOR_WHITE, COLOR_BLACK);
+
+    attron(A_REVERSE);
+    attron(COLOR_PAIR(1));
+
+    for(size_t i{}; i < (size_t) LINES-1; i++)
+        for(size_t j {}; j < (size_t) linhas[i].length(); j++)
+            mvprintw(i, j, ESPACO);
+
+    //mvprintw(y, 0, linhas[y].c_str());
+
+    getch();
+
+    attroff(COLOR_PAIR(1));
+    attroff(A_REVERSE);
+}
+*/
