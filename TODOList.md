@@ -34,7 +34,7 @@
 
 [ ] Ctrl + A: Selecionar todo o texto.
 
-[ ] Ctrl + B: Selecionar uma linha completa.
+[X] Ctrl + B: Selecionar uma linha completa.
 
 #### Funcionalidades:
 

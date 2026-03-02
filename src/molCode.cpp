@@ -281,11 +281,6 @@ void molCode::entrada(int c)
             selecionar_linha('n');
 
             break;
-
-        case CTRL_A:
-            selecionar_todas_linhas('n');
-
-            break;
         }
         break;
 
@@ -404,11 +399,6 @@ void molCode::entrada(int c)
 
         case CTRL_B:
             selecionar_linha('i');
-
-            break;
-
-        case CTRL_A:
-            selecionar_todas_linhas('i');
 
             break;
 
@@ -642,7 +632,7 @@ void molCode::selecionar_linha(char modo_atual)
 
     clrtoeol();
 
-    mvprintw(y-scroll_offset, x, linhas[y].c_str());
+    mvprintw(y-scroll_offset, 0, linhas[y].c_str());
 
     refresh();
 
@@ -674,24 +664,3 @@ void molCode::selecionar_linha(char modo_atual)
     attroff(COLOR_PAIR(1));
     attroff(A_REVERSE);
 }
-
-/*
-void molCode::selecionar_todas_linhas(char modo_atual)
-{
-    init_pair(1, COLOR_WHITE, COLOR_BLACK);
-
-    attron(A_REVERSE);
-    attron(COLOR_PAIR(1));
-
-    for(size_t i{}; i < (size_t) LINES-1; i++)
-        for(size_t j {}; j < (size_t) linhas[i].length(); j++)
-            mvprintw(i, j, ESPACO);
-
-    //mvprintw(y, 0, linhas[y].c_str());
-
-    getch();
-
-    attroff(COLOR_PAIR(1));
-    attroff(A_REVERSE);
-}
-*/

@@ -44,6 +44,7 @@ private:
     char modo;
     std::string nome_arquivo, estado, sessao;
     std::vector<std::string> linhas;
+    std::vector<std::string> copia_linhas;
     std::string copia;
     size_t total_linhas, scroll_offset;
 
