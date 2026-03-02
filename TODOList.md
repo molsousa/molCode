@@ -60,7 +60,7 @@
 
 [X] Editar nome do arquivo.
 
-[ ] Localizar caminho absoluto.
+[X] Localizar caminho absoluto.
 
 [X] Remover quebra de linha apos salvar e sair.
 

@@ -162,9 +162,10 @@ void molCode::entrada(int c)
             modo = 'n';
             break;
 
+        // editar nome do arquivo atual
         case 'r':
             {
-                std::string novo_nome = "";
+                std::string novo_nome = STRING_VAZIA;
                 int ch;
                 size_t i = 0;
                 move(LINES-1, 0);
@@ -183,7 +184,7 @@ void molCode::entrada(int c)
                             }
                             break;
                         default:
-                            if(CARACTERES_VALIDOS)
+                            if(CARACTERES_VALIDOS) // só é permitido letras, números, underline e ponto
                                 novo_nome.insert(i++, 1, ch);
                             break;
                     }
@@ -201,6 +202,20 @@ void molCode::entrada(int c)
 
                 break;
             }
+
+        // mostrar caminho absoluto do arquivo atual
+        case 'p':
+            attron(A_REVERSE);
+            move(LINES-1, 0);
+            clrtoeol();
+
+            mvprintw(LINES-1, 0, ":%s", caminho().c_str());
+            refresh();
+
+            napms(2500);
+            attroff(A_REVERSE);
+
+            break;
 
         // move o cursor para o final do arquivo
         case KEY_END:
@@ -359,6 +374,7 @@ void molCode::entrada(int c)
             linhas[y].insert(0, "   ");
             break;
 
+        // mover cursor a cada substring separada por espaço
         case CTRL_DIREITA:
             x = linhas[y].find(ESPACO, x+1);
 
@@ -564,6 +580,14 @@ void molCode::salvar()
         endwin();
         throw std::runtime_error("Não é possível abrir o arquivo. Permissão negada");
     }
+}
+
+// Método para buscar caminho absoluto
+std::string molCode::caminho()
+{
+    std::filesystem::path caminho = std::filesystem::absolute(nome_arquivo);
+
+    return caminho;
 }
 
 // Método para definição de constantes

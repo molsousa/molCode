@@ -107,4 +107,6 @@ protected:
     void editar_nome(std::string&);
     // Método para salvar arquivo.
     void salvar();
+    // Método para buscar caminho absoluto
+    std::string caminho();
 };
