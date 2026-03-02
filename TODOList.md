@@ -22,7 +22,9 @@
 
 [ ] Ctrl + BS: Para apagar uma string continua.
 
-[ ] Ctrl + move: Mover o cursor entre strings continuas.
+[ ] Ctrl + seta esquerda: Mover cursor entre substrings pela esquerda.
+
+[X] Ctrl + seta direita: Mover cursor entre substrings pela direita.
 
 [ ] Ctrl + Enter: Pular linha sem quebrar o texto.
 
