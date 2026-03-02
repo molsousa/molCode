@@ -52,7 +52,7 @@
 
 [ ] Corrigir bugs visuais no editor com entradas fora do intervalo ASCII.
 
-[ ] Mostrar linha de comandos.
+[X] Mostrar linha de comandos.
 
 #### Comandos:
 

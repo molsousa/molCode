@@ -91,8 +91,15 @@ void molCode::linhaDeEstado()
     attron(COLOR_PAIR(1));
     // TODO lista de comandos
 
-    for(int i {}; i < COLS; ++i)
+    for(int i {}; i < COLS; ++i){
         mvprintw(LINES-1, i, ESPACO);
+    }
+
+    if(modo == 'n')
+        mvprintw(LINES - 1, (int)estado.length(), " | W=Salvar e Sair | S=Salvar | I=Inserir | Q=Sair");
+
+    else if(modo == 'i')
+        mvprintw(LINES - 1, (int)estado.length(), " | ESC=Modo Normal");
 
     mvprintw(LINES - 1, 0, estado.c_str());
     mvprintw(LINES - 1, COLS - sessao.length(), &sessao[0]);
