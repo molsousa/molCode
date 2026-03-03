@@ -665,11 +665,15 @@ void molCode::selecionar_linha(char modo_atual)
             break;
 
         case KEY_BACKSPACE:
-            if(modo_atual == 'i'){
+            if(linhas[y].length() > 0 && modo_atual == 'i'){
                 x = linhas[y].length();
 
-                if(y+1 < linhas.size())
+                if(y > 0 && y+1 < linhas.size())
                     linhas[y] += linhas[y+1];
+
+                else{
+                    linhas[y].erase(0, x);
+                }
 
                 ch_remover(y);
                 cima();
@@ -720,6 +724,9 @@ void molCode::selecionar_todas_linhas(char modo_atual)
                 }
 
                 linhas[0].erase(0, linhas[i].length());
+
+                y = x = scroll_offset = 0;
+                move(y, x);
             }
             break;
     }
