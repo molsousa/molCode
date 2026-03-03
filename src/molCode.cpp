@@ -177,7 +177,11 @@ void molCode::entrada(int c)
                 move(LINES-1, 0);
                 clrtoeol();
 
-                while((ch = getch()) != '\n'){
+                mvprintw(LINES - 1, 0, ":");
+
+                do{
+                    ch = getch();
+
                     switch(ch){
                         case KEY_BACKSPACE:
                         case 127:
@@ -189,12 +193,15 @@ void molCode::entrada(int c)
                                 refresh();
                             }
                             break;
+                        case ESC:
+                            ch = '\n';
+                            novo_nome = nome_arquivo;
+                            break;
                         default:
                             if(CARACTERES_VALIDOS) // só é permitido letras, números, underline e ponto
                                 novo_nome.insert(i++, 1, ch);
                             break;
                     }
-
                     move(LINES, i);
                     clrtoeol();
 
@@ -203,7 +210,8 @@ void molCode::entrada(int c)
 
                     refresh();
 
-                }
+                }while(ch != '\n');
+
                 editar_nome(novo_nome);
 
                 break;
@@ -569,6 +577,7 @@ void molCode::abrir()
     }
 }
 
+// Método para editar nome do arquivo.
 void molCode::editar_nome(std::string& novo_nome)
 {
     rename(&nome_arquivo[0], &novo_nome[0]);
@@ -663,4 +672,9 @@ void molCode::selecionar_linha(char modo_atual)
 
     attroff(COLOR_PAIR(1));
     attroff(A_REVERSE);
+}
+
+void molCode::selecionar_todas_linhas(char modo_atual)
+{
+
 }
