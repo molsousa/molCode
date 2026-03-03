@@ -15,11 +15,13 @@ molCode::molCode(const std::string& arquivo)
     estado = MODO_NORMAL;
     copia = sessao = STRING_VAZIA;
 
-    if(arquivo.empty())
+    if(arquivo.empty()){
         nome_arquivo = SEM_TITULO;
+    }
 
-    else
+    else{
         nome_arquivo = arquivo;
+    }
 
     abrir();
     initscr(); // inicializa ncurse
@@ -78,14 +80,17 @@ void molCode::atualizar()
 void molCode::linhaDeEstado()
 {
     start_color();
-    if(modo == 'n')
+    if(modo == 'n'){
         init_pair(1, COLOR_CYAN, COLOR_BLACK); // cor ciano caso esteja em modo normal
+    }
 
-    else if(modo == 'i')
+    else if(modo == 'i'){
         init_pair(1, COLOR_RED, COLOR_BLACK); // vermelho caso esteja em modo de inserção
+    }
 
-    else if(modo == 's')
+    else if(modo == 's'){
         init_pair(1, COLOR_WHITE, COLOR_BLACK); // cor branca pra salvar
+    }
 
     attron(A_REVERSE);
     attron(COLOR_PAIR(1));
@@ -94,11 +99,13 @@ void molCode::linhaDeEstado()
         mvprintw(LINES-1, i, ESPACO);
     }
 
-    if(modo == 'n')
+    if(modo == 'n'){
         mvprintw(LINES - 1, (int)estado.length(), " | W=Salvar e Sair | P=Caminho | S=Salvar | I=Inserir | Q=Sair");
+    }
 
-    else if(modo == 'i')
+    else if(modo == 'i'){
         mvprintw(LINES - 1, (int)estado.length(), " | ESC=Normal | CTRL+X=Copiar | CTRL+V=Colar");
+    }
 
     mvprintw(LINES - 1, 0, estado.c_str());
     mvprintw(LINES - 1, COLS - sessao.length(), &sessao[0]);
@@ -112,110 +119,110 @@ void molCode::entrada(int c)
 {
     // switch para mover cursor, tanto em tela normal quanto em inserção
     switch(c){
-    // mover cursor pra cima
-    case KEY_UP:
-        cima();
-        return;
+        // mover cursor pra cima
+        case KEY_UP:
+            cima();
+            return;
 
-    // mover cursor pra esquerda
-    case KEY_LEFT:
-        esquerda();
-        return;
+        // mover cursor pra esquerda
+        case KEY_LEFT:
+            esquerda();
+            return;
 
-    // mover cursor pra direita
-    case KEY_RIGHT:
-        direita();
-        return;
+        // mover cursor pra direita
+        case KEY_RIGHT:
+            direita();
+            return;
 
-    // mover cursor pra baixo
-    case KEY_DOWN:
-        baixo();
-        return;
+        // mover cursor pra baixo
+        case KEY_DOWN:
+            baixo();
+            return;
     }
 
     switch(modo){
-    case ESC:
-    case 'n':
-        switch(c){
-        // finaliza o editor
-        case 'q':
-            modo = 'q';
-            break;
+        case ESC:
+        case 'n':
+            switch(c){
+            // finaliza o editor
+            case 'q':
+                modo = 'q';
+                break;
 
-        // ativa o modo inserção
-        case 'i':
-            modo = 'i';
-            break;
+            // ativa o modo inserção
+            case 'i':
+                modo = 'i';
+                break;
 
-        // salva e finaliza o editor
-        case 'w':
-            modo = 'w';
-            salvar();
-            refresh();
-            endwin();
-            std::printf("Salvo.");
-            exit(0);
-            break;
+            // salva e finaliza o editor
+            case 'w':
+                modo = 'w';
+                salvar();
+                refresh();
+                endwin();
+                std::printf("Salvo.");
+                exit(0);
+                break;
 
-        // salva sem sair do editor
-        case 's':
-            modo = 's';
-            salvar();
-            atualizar();
-            linhaDeEstado();
-            imprimir();
-            napms(1500);
-            modo = 'n';
-            break;
+            // salva sem sair do editor
+            case 's':
+                modo = 's';
+                salvar();
+                atualizar();
+                linhaDeEstado();
+                imprimir();
+                napms(1500);
+                modo = 'n';
+                break;
 
-        // editar nome do arquivo atual
-        case 'r':
-            {
-                std::string novo_nome = STRING_VAZIA;
-                int ch;
-                size_t i = 0;
-                move(LINES-1, 0);
-                clrtoeol();
-
-                mvprintw(LINES - 1, 0, ":");
-
-                do{
-                    ch = getch();
-
-                    switch(ch){
-                        case KEY_BACKSPACE:
-                        case 127:
-                        case '\b':
-                            if(i > 0){
-                                novo_nome.erase(--i, 1);
-                                move(LINES, i);
-                                mvprintw(LINES - 1, 0, ":%s", novo_nome.c_str());
-                                refresh();
-                            }
-                            break;
-                        case ESC:
-                            ch = '\n';
-                            novo_nome = nome_arquivo;
-                            break;
-                        default:
-                            if(CARACTERES_VALIDOS) // só é permitido letras, números, underline e ponto
-                                novo_nome.insert(i++, 1, ch);
-                            break;
-                    }
-                    move(LINES, i);
+            // editar nome do arquivo atual
+            case 'r':
+                {
+                    std::string novo_nome = STRING_VAZIA;
+                    int ch;
+                    size_t i = 0;
+                    move(LINES-1, 0);
                     clrtoeol();
 
-                    mvprintw(LINES - 1, 0, ":%s", novo_nome.c_str());
-                    move(LINES, i+1);
+                    mvprintw(LINES - 1, 0, ":");
 
-                    refresh();
+                    do{
+                        ch = getch();
 
-                }while(ch != '\n');
+                        switch(ch){
+                            case KEY_BACKSPACE:
+                            case 127:
+                            case '\b':
+                                if(i > 0){
+                                    novo_nome.erase(--i, 1);
+                                    move(LINES, i);
+                                    mvprintw(LINES - 1, 0, ":%s", novo_nome.c_str());
+                                    refresh();
+                                }
+                                break;
+                            case ESC:
+                                ch = '\n';
+                                novo_nome = nome_arquivo;
+                                break;
+                            default:
+                                if(CARACTERES_VALIDOS) // só é permitido letras, números, underline e ponto
+                                    novo_nome.insert(i++, 1, ch);
+                                break;
+                        }
+                        move(LINES, i);
+                        clrtoeol();
 
-                editar_nome(novo_nome);
+                        mvprintw(LINES - 1, 0, ":%s", novo_nome.c_str());
+                        move(LINES, i+1);
 
-                break;
-            }
+                        refresh();
+
+                    }while(ch != '\n');
+
+                    editar_nome(novo_nome);
+
+                    break;
+                }
 
         // mostrar caminho absoluto do arquivo atual
         case 'p':
@@ -299,131 +306,135 @@ void molCode::entrada(int c)
 
     case 'i':
         switch(c){
-        // retorna ao modo normal
-        case ESC:
-            modo = 'n';
-            break;
+            // retorna ao modo normal
+            case ESC:
+                modo = 'n';
+                break;
 
-        // configuração para backspace
-        case KEY_BACKSPACE:
-        case 127:
-            if(x == 0 && y > 0){ // caso y > 0, então move o cursor para a linha anterior
-                x = linhas[y-1].length();
-                linhas[y-1] += linhas[y];
-                ch_remover(y);
-                cima();
-            }
-            else if(x > 0)
-                linhas[y].erase(--x, 1);
-            break;
+            // configuração para backspace
+            case KEY_BACKSPACE:
+            case 127:
+                if(x == 0 && y > 0){ // caso y > 0, então move o cursor para a linha anterior
+                    x = linhas[y-1].length();
+                    linhas[y-1] += linhas[y];
+                    ch_remover(y);
+                    cima();
+                }
+                else if(x > 0){
+                    linhas[y].erase(--x, 1);
+                }
+                break;
 
-        // configuração para delete
-        case KEY_DC:
-            if(x == linhas[y].length() && y != linhas.size() - 1)
-                linhas[y] += linhas[y + 1]; // puxa a linha de baixo para cima
+            // configuração para delete
+            case KEY_DC:
+                if(x == linhas[y].length() && y != linhas.size() - 1){
+                    linhas[y] += linhas[y + 1]; // puxa a linha de baixo para cima
+                }
 
-            else
-                linhas[y].erase(x, 1);
+                else{
+                    linhas[y].erase(x, 1);
+                }
 
-            break;
+                break;
 
-        // configuração para enter
-        case KEY_ENTER:
-        case 10:
-            if(x < linhas[y].length()){ // quebra linha e move os caracteres para a próxima linha
-                ch_inserir(linhas[y].substr(x, linhas[y].length() - x), y+1);
-                linhas[y].erase(x, linhas[y].length()-x);
-            }
-            else
-                ch_inserir(STRING_VAZIA, y+1);
+            // configuração para enter
+            case KEY_ENTER:
+            case 10:
+                if(x < linhas[y].length()){ // quebra linha e move os caracteres para a próxima linha
+                    ch_inserir(linhas[y].substr(x, linhas[y].length() - x), y+1);
+                    linhas[y].erase(x, linhas[y].length()-x);
+                }
+                else{
+                    ch_inserir(STRING_VAZIA, y+1);
+                }
 
-            x = 0;
-            baixo();
-            break;
+                x = 0;
+                baixo();
+                break;
 
-        // configuração para tabulação
-        case KEY_BTAB:
-        case KEY_CTAB:
-        case KEY_STAB:
-        case KEY_CATAB:
-        case 9:
-            linhas[y].insert(x, 3, ' '); // insere 3 espaços
-            x += 3;
-            break;
+            // configuração para tabulação
+            case KEY_BTAB:
+            case KEY_CTAB:
+            case KEY_STAB:
+            case KEY_CATAB:
+            case 9:
+                linhas[y].insert(x, 3, ' '); // insere 3 espaços
+                x += 3;
+                break;
 
-        // move o cursor para o final do arquivo
-        case KEY_END:
-            y = linhas.size()-1;
-            x = linhas[y].length();
-            scroll_offset = linhas.size() - (LINES-1);
+            // move o cursor para o final do arquivo
+            case KEY_END:
+                y = linhas.size()-1;
+                x = linhas[y].length();
+                scroll_offset = linhas.size() - (LINES-1);
 
-            imprimir();
-            break;
+                imprimir();
+                break;
 
-        // move o cursor para a primeira linha da primeira coluna
-        case KEY_HOME:
-            x = 0;
-            y = 0;
-            scroll_offset = 0;
+            // move o cursor para a primeira linha da primeira coluna
+            case KEY_HOME:
+                x = 0;
+                y = 0;
+                scroll_offset = 0;
 
-            imprimir();
-            break;
+                imprimir();
+                break;
 
-        // move o cursor para a última coluna da linha atual
-        case KEY_NPAGE:
-            x = linhas[y].length();
-
-            move(y, x);
-            break;
-
-        // move o cursor para a primeira coluna da linha atual
-        case KEY_PPAGE:
-            x = 0;
-
-            move(y, x);
-            break;
-
-        // copia uma linha inteira
-        case CTRL_X:
-            copia = linhas[y];
-            break;
-
-        // cola a string copiada
-        case CTRL_V:
-            linhas[y].insert(x, copia);
-            break;
-
-        // insere tabulação no início da string
-        case CTRL_COLCHETE_F:
-            linhas[y].insert(0, "   ");
-            break;
-
-        // mover cursor a cada substring separada por espaço
-        case CTRL_DIREITA:
-            x = linhas[y].find(ESPACO, x+1);
-
-            if(x < linhas[y].length())
-                move(y, x);
-
-            else
+            // move o cursor para a última coluna da linha atual
+            case KEY_NPAGE:
                 x = linhas[y].length();
 
-            break;
+                move(y, x);
+                break;
 
-        case CTRL_B:
-            selecionar_linha('i');
+            // move o cursor para a primeira coluna da linha atual
+            case KEY_PPAGE:
+                x = 0;
 
-            break;
+                move(y, x);
+                break;
 
-        case CTRL_A:
-            selecionar_todas_linhas('i');
+            // copia uma linha inteira
+            case CTRL_X:
+                copia = linhas[y];
+                break;
 
-            break;
+            // cola a string copiada
+            case CTRL_V:
+                linhas[y].insert(x, copia);
+                break;
 
-        default:
-            linhas[y].insert(x, 1, c);
-            ++x;
-            break;
+            // insere tabulação no início da string
+            case CTRL_COLCHETE_F:
+                linhas[y].insert(0, "   ");
+                break;
+
+            // mover cursor a cada substring separada por espaço
+            case CTRL_DIREITA:
+                x = linhas[y].find(ESPACO, x+1);
+
+                if(x < linhas[y].length())
+                    move(y, x);
+
+                else
+                    x = linhas[y].length();
+
+                break;
+
+            case CTRL_B:
+                selecionar_linha('i');
+
+                break;
+
+            case CTRL_A:
+                selecionar_todas_linhas('i');
+
+                break;
+
+            default:
+                linhas[y].insert(x, 1, c);
+                ++x;
+                break;
         }
         break;
     }
@@ -446,14 +457,16 @@ void molCode::imprimir()
     for(size_t i {}; i < (size_t) linhas_visiveis; ++i){
         size_t linha = scroll_offset+i;
 
-        if(linha < linhas.size())
+        if(linha < linhas.size()){
             mvprintw(i, 0, linhas[linha].c_str());
+        }
     }
 
     int cursor_y = y - scroll_offset;
 
-    if(cursor_y >= 0 && cursor_y < linhas_visiveis)
+    if(cursor_y >= 0 && cursor_y < linhas_visiveis){
         move(cursor_y, x);
+    }
 
     else{
         cursor_y = (cursor_y < 0) ? 0 : linhas_visiveis-1;
@@ -496,8 +509,9 @@ void molCode::cima()
     if(y > 0){
         --y;
 
-        if(y < scroll_offset)
+        if(y < scroll_offset){
             scroll_offset = y;
+        }
     }
 
     if(x >= linhas[y].length())
@@ -554,12 +568,14 @@ void molCode::baixo()
         ++y;
 
         int linhas_visiveis = LINES - 1;
-        if(y >= scroll_offset + linhas_visiveis)
+        if(y >= scroll_offset + linhas_visiveis){
             scroll_offset = y - linhas_visiveis + 1;
+        }
     }
 
-    if(x >= linhas[y].length())
+    if(x >= linhas[y].length()){
         x = linhas[y].length();
+    }
 
     imprimir();
 }
@@ -578,8 +594,9 @@ void molCode::abrir()
                 ch_anexo(buffer);
             }
         }
-        else // joga exceção caso o arquivo tenha permissão especial para não modificar
+        else{ // joga exceção caso o arquivo tenha permissão especial para não modificar
             throw std::runtime_error("Não é possível abrir o arquivo. Permissão negada");
+        }
     }
     else{
         std::string str {};
@@ -604,8 +621,9 @@ void molCode::salvar()
             ofile << linhas[i]; // salva no arquivo de saída
 
             // Não insere enter ao final do arquivo
-            if(i < linhas.size()-1)
+            if(i < linhas.size()-1){
                 ofile << '\n';
+            }
         }
 
         ofile.close();
@@ -668,8 +686,9 @@ void molCode::selecionar_linha(char modo_atual)
             if(linhas[y].length() > 0 && modo_atual == 'i'){
                 x = linhas[y].length();
 
-                if(y > 0 && y+1 < linhas.size())
+                if(y > 0 && y+1 < linhas.size()){
                     linhas[y] += linhas[y+1];
+                }
 
                 else{
                     linhas[y].erase(0, x);
