@@ -9,59 +9,61 @@
 #include <fstream>
 #include <locale.h>
 
-// Definição de macros para string literal
-#define SEM_TITULO "sem_titulo"
-#define MODO_NORMAL "NORMAL"
-#define MODO_INSERIR "INSERIR"
-#define MODO_SALVAR "SALVO"
-#define MODO_EDICAO "EDITAR"
-#define STRING_VAZIA ""
-#define ESPACO " "
-
-// Definição de macros para valores numéricos
-#define CTRL_CIMA 0x270
-#define CTRL_ESQUERDA 0x271
-#define CTRL_DIREITA 0x272
-#define CTRL_BAIXO 0x273
-#define CTRL_COLCHETE_A 0x274
-#define CTRL_COLCHETE_F 0x275
-#define CTRL_BACKSPACE 0x276
-#define CTRL_ENTER 0x277
-#define CTRL_X 0x278
-#define CTRL_V 0x279
-#define CTRL_C 0x27A
-#define CTRL_A 0x27B
-#define CTRL_B 0x27C
-#define CTRL_N 0x27D
-#define ESC 27
-
+// Macro para condicional de caracteres válidos
 #define CARACTERES_VALIDOS ((ch >= 65 && ch <= 90) || (ch >= 97 && ch <= 122) || (ch >= '0' && ch <= '9') || (ch == '.') || (ch == '_'))
+
+// Definição de constantes para valores numéricos
+const int ESC {27};
+const int CTRL_CIMA {0x270};
+const int CTRL_ESQUERDA {0x271};
+const int CTRL_DIREITA {0x272};
+const int CTRL_BAIXO {0x273};
+const int CTRL_COLCHETE_A {0x274};
+const int CTRL_COLCHETE_F {0x275};
+const int CTRL_BACKSPACE {0x276};
+const int CTRL_ENTER {0x277};
+const int CTRL_X {0x278};
+const int CTRL_V {0x279};
+const int CTRL_C {0x27A};
+const int CTRL_A {0x27B};
+const int CTRL_B {0x27C};
+const int CTRL_N {0x27D};
+
+// Definição de constantes para string literal
+const std::string STRING_VAZIA {""};
+const std::string SEM_TITULO {"SEM_TITULO"};
+const std::string MODO_NORMAL {"NORMAL"};
+const std::string MODO_INSERIR {"INSERIR"};
+const std::string MODO_SALVAR {"SALVO"};
+const std::string MODO_EDICAO {"EDITAR"};
+const std::string ESPACO {" "};
 
 class molCode
 {
 private:
-    size_t x, y;
-    char modo;
-    std::string nome_arquivo, estado, sessao;
-    std::vector<std::string> linhas;
-    std::vector<std::string> copia_linhas;
-    std::string copia;
-    size_t total_linhas, scroll_offset;
+    size_t x, y; // movimentar cursor
+    char modo; // modo de operação
+    std::string nome_arquivo;
+    std::string estado, sessao; // estado atual e linha de estado
+    std::vector<std::string> linhas; // manipular linhas do arquivo
+    std::vector<std::string> copia_linhas; // vetor de string auxiliar para copiar linhas
+    std::string copia; // string auxiliar para copiar linha
+    size_t total_linhas, scroll_offset; // movimentar tela
 
-    // Método para remover um caractere
-    void ch_remover(int);
-    // Método para manipular tab
-    std::string ch_tabs(std::string&);
-    // Método para inserir caractere no meio da linha
+    // Função membro para remover um caractere
+    void ch_remover(const int);
+    // Função membro para manipular tab
+    std::string ch_tabs(std::string&) const;
+    // Função membro para inserir caractere no meio da linha
     void ch_inserir(std::string, int);
-    // Método para inserir ao final da linha
+    // Função membro para inserir ao final da linha
     void ch_anexo(std::string&);
-    // Método para definição de constantes
+    // Função membro para definição de constantes
     void definir_constantes();
-
-    void selecionar_linha(char);
-
-    void selecionar_todas_linhas(char);
+    // Função membro para selecionar uma única linha
+    void selecionar_linha(const char);
+    // Função membro para selecionar uma todas as linhas
+    void selecionar_todas_linhas(const char);
 
 public:
     /*
@@ -72,46 +74,47 @@ public:
     molCode(const std::string&);
     //Destrutor para finalizar o editor.
     ~molCode();
-    // Método para inicializar ncurses
+    // Função membro para inicializar ncurses
     void inicializar();
 
 protected:
-    // Método para atualizar estado.
+    // Função membro para atualizar estado.
     void atualizar();
-    // Método para mostrar o estado.
+    // Função membro para mostrar o estado.
     void linhaDeEstado();
-    // Método para interpretar entrada do usuário.
-    void entrada(int);
+    // Função membro para interpretar entrada do usuário.
+    void entrada(const int);
     /*
-    *   Método para desenhar o conteúdo do buffer na tela
+    *   Função membro para desenhar o conteúdo do buffer na
+    '   tela
     *   Caso tenha linhas não existentes no buffer, limpa
     *   Cursor fica na posição original
     */
     void imprimir();
 
-    // Método para mover cursor pra cima.
+    // Função membro para mover cursor pra cima.
     void cima();
     /*
-    *   Método para mover cursor para a esquerda.
+    *   Função membro para mover cursor para a esquerda.
     *   Caso o cursor chegue no início da coluna e tenha texto
         acima, o cursor é movido pra cima na última linha.
     */
     void esquerda();
     /*
-    *   Método para mover cursor para a direita.
+    *   Função membro para mover cursor para a direita.
     *   Caso o cursor chegue ao final da coluna e tenha texto
         abaixo, o cursor é movido pro início da próxima linha.
     */
     void direita();
-    // Método para mover cursor pra baixo.
+    // Função membro para mover cursor pra baixo.
     void baixo();
 
-    // Método para abrir arquivo.
+    // Função membro para abrir arquivo.
     void abrir();
-    // Método para editar nome do arquivo.
-    void editar_nome(std::string&);
-    // Método para salvar arquivo.
+    // Função membro para editar nome do arquivo.
+    void editar_nome(const std::string&);
+    // Função membro para salvar arquivo.
     void salvar();
-    // Método para buscar caminho absoluto
-    std::string caminho();
+    // Função membro para buscar caminho absoluto
+    std::string caminho() const;
 };

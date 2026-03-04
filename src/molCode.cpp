@@ -7,7 +7,7 @@
 */
 molCode::molCode(const std::string& arquivo)
 {
-    setlocale(LC_ALL, STRING_VAZIA);
+    setlocale(LC_ALL, STRING_VAZIA.c_str());
 
     x = y = 0;
     scroll_offset = 0;
@@ -40,19 +40,19 @@ molCode::~molCode()
     endwin(); // finaliza ncurses e volta pro terminal anterior
 }
 
-// Método para inicializar ncurses
+// Função membro para inicializar ncurses
 void molCode::inicializar()
 {
     while(modo != 'q'){
         atualizar();
         linhaDeEstado();
         imprimir();
-        int c = getch();
+        int c {getch()};
         entrada(c);
     }
 }
 
-// Método para atualizar estado.
+// Função membro para atualizar estado.
 void molCode::atualizar()
 {
     switch(modo){
@@ -76,7 +76,7 @@ void molCode::atualizar()
     estado.insert(0, ESPACO);
 }
 
-// Método para mostrar o estado.
+// Função membro para mostrar o estado.
 void molCode::linhaDeEstado()
 {
     start_color();
@@ -96,26 +96,26 @@ void molCode::linhaDeEstado()
     attron(COLOR_PAIR(1));
 
     for(int i {}; i < COLS; ++i){
-        mvprintw(LINES-1, i, ESPACO);
+        mvprintw(LINES-1, i, ESPACO.c_str());
     }
 
     if(modo == 'n'){
-        mvprintw(LINES - 1, (int)estado.length(), " | W=Salvar e Sair | P=Caminho | S=Salvar | I=Inserir | Q=Sair");
+        mvprintw(LINES - 1, static_cast<int>(estado.length()), " | W=Salvar e Sair | P=Caminho | S=Salvar | I=Inserir | Q=Sair");
     }
 
     else if(modo == 'i'){
-        mvprintw(LINES - 1, (int)estado.length(), " | ESC=Normal | CTRL+X=Copiar | CTRL+V=Colar");
+        mvprintw(LINES - 1, static_cast<int>(estado.length()), " | ESC=Normal | CTRL+X=Copiar | CTRL+V=Colar");
     }
 
     mvprintw(LINES - 1, 0, estado.c_str());
-    mvprintw(LINES - 1, COLS - sessao.length(), &sessao[0]);
+    mvprintw(LINES - 1, COLS - sessao.length(), sessao.c_str());
 
     attroff(COLOR_PAIR(1));
     attroff(A_REVERSE);
 }
 
-// Método para interpretar entrada do usuário.
-void molCode::entrada(int c)
+// Função membro para interpretar entrada do usuário.
+void molCode::entrada(const int c)
 {
     // switch para mover cursor, tanto em tela normal quanto em inserção
     switch(c){
@@ -178,9 +178,9 @@ void molCode::entrada(int c)
             // editar nome do arquivo atual
             case 'r':
                 {
-                    std::string novo_nome = STRING_VAZIA;
+                    std::string novo_nome {STRING_VAZIA};
                     int ch;
-                    size_t i = 0;
+                    size_t i {};
                     move(LINES-1, 0);
                     clrtoeol();
 
@@ -205,8 +205,9 @@ void molCode::entrada(int c)
                                 novo_nome = nome_arquivo;
                                 break;
                             default:
-                                if(CARACTERES_VALIDOS) // só é permitido letras, números, underline e ponto
+                                if(CARACTERES_VALIDOS){ // só é permitido letras, números, underline e ponto
                                     novo_nome.insert(i++, 1, ch);
+                                }
                                 break;
                         }
                         move(LINES, i);
@@ -276,6 +277,7 @@ void molCode::entrada(int c)
             break;
 
 
+        // mover cursor a cada substring separada por espaço
         case CTRL_ESQUERDA:
 
             break;
@@ -292,11 +294,13 @@ void molCode::entrada(int c)
 
             break;
 
+        // selecionar linha única
         case CTRL_B:
             selecionar_linha('n');
 
             break;
 
+        // selecionar todas as linhas do arquivo
         case CTRL_A:
             selecionar_todas_linhas('n');
 
@@ -421,11 +425,13 @@ void molCode::entrada(int c)
 
                 break;
 
+            // selecionar linha única
             case CTRL_B:
                 selecionar_linha('i');
 
                 break;
 
+            // selecionar todas as linhas do arquivo
             case CTRL_A:
                 selecionar_todas_linhas('i');
 
@@ -441,21 +447,22 @@ void molCode::entrada(int c)
 }
 
 /*
-*   Método para desenhar o conteúdo do buffer na tela
+*   Função membro para desenhar o conteúdo do buffer na
+    tela
 *   Caso tenha linhas não existentes no buffer, limpa
 *   Cursor fica na posição original
 */
 void molCode::imprimir()
 {
-    for(size_t i {}; i < (size_t) LINES-1; ++i){
+    for(size_t i {}; i < static_cast<size_t>(LINES-1); ++i){
         move(i, 0);
         clrtoeol();
     }
 
-    int linhas_visiveis = LINES-1;
+    int linhas_visiveis {LINES-1};
 
-    for(size_t i {}; i < (size_t) linhas_visiveis; ++i){
-        size_t linha = scroll_offset+i;
+    for(size_t i {}; i < static_cast<size_t>(linhas_visiveis); ++i){
+        size_t linha {scroll_offset+i};
 
         if(linha < linhas.size()){
             mvprintw(i, 0, linhas[linha].c_str());
@@ -476,34 +483,34 @@ void molCode::imprimir()
     refresh();
 }
 
-// Método para remover um caractere
-void molCode::ch_remover(int numero)
+// Função membro para remover um caractere
+void molCode::ch_remover(const int numero)
 {
     linhas.erase(linhas.begin() + numero);
 }
 
-// Método para manipular tab
-std::string molCode::ch_tabs(std::string& linha)
+// Função membro para manipular tab
+std::string molCode::ch_tabs(std::string& linha) const
 {
-    std::size_t tab = linha.find('\t');
+    std::size_t tab {linha.find('\t')};
     return (tab == linha.npos) ? linha : ch_tabs(linha.replace(tab, 1, "   "));
 }
 
-// Método para inserir caractere no meio da linha
+// Função membro para inserir caractere no meio da linha
 void molCode::ch_inserir(std::string linha, int numero)
 {
     linha = ch_tabs(linha);
     linhas.insert(linhas.begin() + numero, linha);
 }
 
-// Método para inserir ao final da linha
+// Função membro para inserir ao final da linha
 void molCode::ch_anexo(std::string& linha)
 {
     linha = ch_tabs(linha);
     linhas.push_back(linha);
 }
 
-// Método para mover cursor pra cima.
+// Função membro para mover cursor pra cima.
 void molCode::cima()
 {
     if(y > 0){
@@ -521,7 +528,7 @@ void molCode::cima()
 }
 
 /*
-*   Método para mover cursor para a esquerda.
+*   Função membro para mover cursor para a esquerda.
 *   Caso o cursor chegue no início da coluna e tenha texto
     acima, o cursor é movido pra cima na última linha.
 */
@@ -541,13 +548,13 @@ void molCode::esquerda()
 }
 
 /*
-*   Método para mover cursor para a direita.
+*   Função membro para mover cursor para a direita.
 *   Caso o cursor chegue ao final da coluna e tenha texto
     abaixo, o cursor é movido pro início da próxima linha.
 */
 void molCode::direita()
 {
-    if(x <= ((size_t)COLS) && x <= linhas[y].length()-1){
+    if(x <= static_cast<size_t>(COLS) && x <= linhas[y].length()-1){
         ++x;
         move(y, x);
     }
@@ -561,13 +568,13 @@ void molCode::direita()
     }
 }
 
-// Método para mover cursor pra baixo.
+// Função membro para mover cursor pra baixo.
 void molCode::baixo()
 {
     if(y < linhas.size() - 1){
         ++y;
 
-        int linhas_visiveis = LINES - 1;
+        int linhas_visiveis {LINES - 1};
         if(y >= scroll_offset + linhas_visiveis){
             scroll_offset = y - linhas_visiveis + 1;
         }
@@ -580,7 +587,7 @@ void molCode::baixo()
     imprimir();
 }
 
-// Método para abrir arquivo.
+// Função membro para abrir arquivo.
 void molCode::abrir()
 {
     if(std::filesystem::exists(nome_arquivo)){
@@ -604,14 +611,14 @@ void molCode::abrir()
     }
 }
 
-// Método para editar nome do arquivo.
-void molCode::editar_nome(std::string& novo_nome)
+// Função membro para editar nome do arquivo.
+void molCode::editar_nome(const std::string& novo_nome)
 {
     rename(&nome_arquivo[0], &novo_nome[0]);
     nome_arquivo = novo_nome;
 }
 
-// Método para salvar arquivo.
+// Função membro para salvar arquivo.
 void molCode::salvar()
 {
     std::ofstream ofile(nome_arquivo);
@@ -635,15 +642,13 @@ void molCode::salvar()
     }
 }
 
-// Método para buscar caminho absoluto
-std::string molCode::caminho()
+// Função membro para buscar caminho absoluto
+std::string molCode::caminho() const
 {
-    std::filesystem::path caminho = std::filesystem::absolute(nome_arquivo);
-
-    return caminho;
+    return std::filesystem::absolute(nome_arquivo);
 }
 
-// Método para definição de constantes
+// Função membro para definição de constantes
 void molCode::definir_constantes()
 {
     define_key("\033[1;5A", CTRL_CIMA);
@@ -660,7 +665,8 @@ void molCode::definir_constantes()
     define_key("\x0E", CTRL_N); // novo arquivo
 }
 
-void molCode::selecionar_linha(char modo_atual)
+// Função membro para selecionar uma única linha
+void molCode::selecionar_linha(const char modo_atual)
 {
     init_pair(1, COLOR_WHITE, COLOR_BLACK);
 
@@ -673,8 +679,7 @@ void molCode::selecionar_linha(char modo_atual)
 
     refresh();
 
-    int ch;
-    ch = getch();
+    int ch {getch()};
 
     switch(ch){
         case CTRL_X:
@@ -689,7 +694,6 @@ void molCode::selecionar_linha(char modo_atual)
                 if(y > 0 && y+1 < linhas.size()){
                     linhas[y] += linhas[y+1];
                 }
-
                 else{
                     linhas[y].erase(0, x);
                 }
@@ -707,7 +711,8 @@ void molCode::selecionar_linha(char modo_atual)
     attroff(A_REVERSE);
 }
 
-void molCode::selecionar_todas_linhas(char modo_atual)
+// Função membro para selecionar uma todas as linhas
+void molCode::selecionar_todas_linhas(const char modo_atual)
 {
     init_pair(1, COLOR_WHITE, COLOR_BLACK);
 
@@ -716,10 +721,11 @@ void molCode::selecionar_todas_linhas(char modo_atual)
 
     clrtoeol();
 
-    for(size_t i{}; i < linhas.size(); i++)
+    for(size_t i{}; i < linhas.size(); i++){
         mvprintw(i - scroll_offset, 0, linhas[i].c_str());
+    }
 
-    int ch = getch();
+    int ch {getch()};
 
     switch(ch){
         case KEY_BACKSPACE:
@@ -731,7 +737,6 @@ void molCode::selecionar_todas_linhas(char modo_atual)
 
                 while(i > 0){
                     linhas[i].erase(0, linhas[i].length());
-
                     --i;
 
                     if(i > 0){
