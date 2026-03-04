@@ -119,25 +119,28 @@ void molCode::entrada(const int c)
 {
     // switch para mover cursor, tanto em tela normal quanto em inserção
     switch(c){
-        // mover cursor pra cima
-        case KEY_UP:
-            cima();
-            return;
+            // mover cursor pra cima
+            case KEY_UP:
+                cima();
 
-        // mover cursor pra esquerda
-        case KEY_LEFT:
-            esquerda();
-            return;
+                return;
 
-        // mover cursor pra direita
-        case KEY_RIGHT:
-            direita();
-            return;
+            // mover cursor pra esquerda
+            case KEY_LEFT:
+                esquerda();
+                return;
 
-        // mover cursor pra baixo
-        case KEY_DOWN:
-            baixo();
-            return;
+            // mover cursor pra direita
+            case KEY_RIGHT:
+                if(linhas[y].length() > 0){
+                    direita();
+                }
+                return;
+
+            // mover cursor pra baixo
+            case KEY_DOWN:
+                baixo();
+                return;
     }
 
     switch(modo){
@@ -408,8 +411,23 @@ void molCode::entrada(const int c)
                 linhas[y].insert(x, copia);
                 break;
 
+            // remove tabulação no início da string
+            case CTRL_SH_ESQUERDA:
+                {
+                    bool flag = true;
+                    for(size_t i{}; i < 3; i++){
+                        if(linhas[y][i] != ' '){
+                            flag = false;
+                        }
+                    }
+                    if(flag){
+                        linhas[y].erase(0, 3);
+                    }
+                }
+                break;
+
             // insere tabulação no início da string
-            case CTRL_COLCHETE_F:
+            case CTRL_SH_DIREITA:
                 linhas[y].insert(0, "   ");
                 break;
 
@@ -656,12 +674,13 @@ void molCode::definir_constantes()
     define_key("\033[1;5C", CTRL_DIREITA); // percorrer entre espaços [X]
     define_key("\033[1;5B", CTRL_BAIXO);
 
-    define_key("\x1D", CTRL_COLCHETE_F); // identar a direita [X]
+    define_key("\033[1;6D", CTRL_SH_ESQUERDA);
+    define_key("\033[1;6C", CTRL_SH_DIREITA); // inserir identação à direita [X]
 
     define_key("\x18", CTRL_X); // copiar linha inteira [X]
     define_key("\x16", CTRL_V); // colar linha copiada [X]
-    define_key("\x02", CTRL_B); // selecionar toda a linha
-    define_key("\x01", CTRL_A); // selecionar todo o arquivo
+    define_key("\x02", CTRL_B); // selecionar toda a linha [X]
+    define_key("\x01", CTRL_A); // selecionar todo o arquivo [X]
     define_key("\x0E", CTRL_N); // novo arquivo
 }
 
@@ -746,8 +765,7 @@ void molCode::selecionar_todas_linhas(const char modo_atual)
                         cima();
                     }
                 }
-
-                linhas[0].erase(0, linhas[i].length());
+                linhas.erase(linhas.begin());
 
                 y = x = scroll_offset = 0;
                 move(y, x);

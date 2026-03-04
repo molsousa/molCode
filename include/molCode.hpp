@@ -14,20 +14,21 @@
 
 // Definição de constantes para valores numéricos
 const int ESC {27};
+
 const int CTRL_CIMA {0x270};
 const int CTRL_ESQUERDA {0x271};
 const int CTRL_DIREITA {0x272};
 const int CTRL_BAIXO {0x273};
-const int CTRL_COLCHETE_A {0x274};
-const int CTRL_COLCHETE_F {0x275};
-const int CTRL_BACKSPACE {0x276};
-const int CTRL_ENTER {0x277};
+
 const int CTRL_X {0x278};
 const int CTRL_V {0x279};
 const int CTRL_C {0x27A};
 const int CTRL_A {0x27B};
 const int CTRL_B {0x27C};
 const int CTRL_N {0x27D};
+
+const int CTRL_SH_ESQUERDA {0x27E};
+const int CTRL_SH_DIREITA {0x27F};
 
 // Definição de constantes para string literal
 const std::string STRING_VAZIA {""};

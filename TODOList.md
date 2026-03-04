@@ -28,13 +28,13 @@
 
 [ ] Ctrl + Enter: Pular linha sem quebrar o texto.
 
-[ ] Ctrl + [: Identar linha a esquerda.
+[X] Ctrl + Shift + seta esquerda: Remover identação de linha a esquerda.
 
-[X] Ctrl + ]: Identar linha a direita.
+[X] Ctrl + Shift + seta direita: Identar linha a direita.
 
 [ ] Ctrl + N: Novo arquivo em fila.
 
-[ ] Ctrl + A: Selecionar todo o texto.
+[X] Ctrl + A: Selecionar todo o texto.
 
 [X] Ctrl + B: Selecionar uma linha completa.
 
