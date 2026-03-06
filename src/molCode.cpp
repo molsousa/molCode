@@ -85,7 +85,7 @@ void molCode::linhaDeEstado()
     }
 
     else if(modo == 'i'){
-        init_pair(1, COLOR_RED, COLOR_BLACK); // vermelho caso esteja em modo de inserção
+        init_pair(1, COLOR_RED, COLOR_WHITE); // vermelho caso esteja em modo de inserção
     }
 
     else if(modo == 's'){
@@ -345,8 +345,15 @@ void molCode::entrada(const int c)
                 if(x == linhas[y].length() && y != linhas.size() - 1){
                     linhas[y] += linhas[y + 1]; // puxa a linha de baixo para cima
 
-                    // todo corrigir delete
-                    // linhas[y+1].erase(0, linhas[y+1].length());
+                    size_t i{y};
+
+                    while(i < linhas.size()-1){
+                        linhas[i] = linhas[i+1];
+                        i++;
+                    }
+
+                    linhas[i].erase(0, linhas[i].length());
+                    linhas.resize(linhas.size()-1);
                 }
 
                 else{
@@ -443,6 +450,20 @@ void molCode::entrada(const int c)
                 break;
 
             // mover cursor a cada substring separada por espaço
+            case CTRL_ESQUERDA:
+            {
+                while(x > 0 && !std::isspace(static_cast<unsigned char>(linhas[y][x]))){
+                    --x;
+                }
+                if(x > 0){
+                    --x;
+                }
+
+                move(y, x);
+            }
+            break;
+
+            // mover cursor a cada substring separada por espaço
             case CTRL_DIREITA:
                 x = linhas[y].find(ESPACO, x+1);
 
@@ -466,6 +487,7 @@ void molCode::entrada(const int c)
 
                 break;
 
+            // por padrão, adiciona novo caractere
             default:
                 linhas[y].insert(x, 1, c);
                 ++x;
