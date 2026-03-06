@@ -7,7 +7,7 @@
 #include <vector>
 #include <filesystem>
 #include <fstream>
-#include <locale.h>
+#include <locale>
 
 // Macro para condicional de caracteres válidos
 #define CARACTERES_VALIDOS ((ch >= 65 && ch <= 90) || (ch >= 97 && ch <= 122) || (ch >= '0' && ch <= '9') || (ch == '.') || (ch == '_'))
@@ -59,12 +59,12 @@ private:
     void ch_inserir(std::string, int);
     // Função membro para inserir ao final da linha
     void ch_anexo(std::string&);
-    // Função membro para definição de constantes
-    void definir_constantes();
     // Função membro para selecionar uma única linha
     void selecionar_linha(const char);
     // Função membro para selecionar uma todas as linhas
     void selecionar_todas_linhas(const char);
+    // Função membro para definição de constantes
+    void definir_constantes();
 
 public:
     /*
@@ -87,7 +87,7 @@ protected:
     void entrada(const int);
     /*
     *   Função membro para desenhar o conteúdo do buffer na
-    '   tela
+        tela
     *   Caso tenha linhas não existentes no buffer, limpa
     *   Cursor fica na posição original
     */

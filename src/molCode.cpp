@@ -25,7 +25,7 @@ molCode::molCode(const std::string& arquivo)
 
     abrir();
     initscr(); // inicializa ncurse
-    raw();
+    raw(); // ignorar comandos do terminal externo
     noecho(); // desativa a exibição automática dos caracteres digitados no terminal
     cbreak(); // os caracteres digitados pelo usuário são enviados pra tela
     keypad(stdscr, true);
@@ -107,8 +107,8 @@ void molCode::linhaDeEstado()
         mvprintw(LINES - 1, static_cast<int>(estado.length()), " | ESC=Normal | CTRL+X=Copiar | CTRL+V=Colar");
     }
 
-    mvprintw(LINES - 1, 0, estado.c_str());
-    mvprintw(LINES - 1, COLS - sessao.length(), sessao.c_str());
+    mvprintw(LINES - 1, 0, "%s", estado.c_str());
+    mvprintw(LINES - 1, COLS - sessao.length(), "%s", sessao.c_str());
 
     attroff(COLOR_PAIR(1));
     attroff(A_REVERSE);
@@ -122,7 +122,6 @@ void molCode::entrada(const int c)
             // mover cursor pra cima
             case KEY_UP:
                 cima();
-
                 return;
 
             // mover cursor pra esquerda
@@ -336,6 +335,9 @@ void molCode::entrada(const int c)
             case KEY_DC:
                 if(x == linhas[y].length() && y != linhas.size() - 1){
                     linhas[y] += linhas[y + 1]; // puxa a linha de baixo para cima
+
+                    // todo corrigir delete
+                    // linhas[y+1].erase(0, linhas[y+1].length());
                 }
 
                 else{
@@ -483,7 +485,7 @@ void molCode::imprimir()
         size_t linha {scroll_offset+i};
 
         if(linha < linhas.size()){
-            mvprintw(i, 0, linhas[linha].c_str());
+            mvprintw(i, 0, "%s", linhas[linha].c_str());
         }
     }
 
@@ -499,33 +501,6 @@ void molCode::imprimir()
     }
 
     refresh();
-}
-
-// Função membro para remover um caractere
-void molCode::ch_remover(const int numero)
-{
-    linhas.erase(linhas.begin() + numero);
-}
-
-// Função membro para manipular tab
-std::string molCode::ch_tabs(std::string& linha) const
-{
-    std::size_t tab {linha.find('\t')};
-    return (tab == linha.npos) ? linha : ch_tabs(linha.replace(tab, 1, "   "));
-}
-
-// Função membro para inserir caractere no meio da linha
-void molCode::ch_inserir(std::string linha, int numero)
-{
-    linha = ch_tabs(linha);
-    linhas.insert(linhas.begin() + numero, linha);
-}
-
-// Função membro para inserir ao final da linha
-void molCode::ch_anexo(std::string& linha)
-{
-    linha = ch_tabs(linha);
-    linhas.push_back(linha);
 }
 
 // Função membro para mover cursor pra cima.
@@ -666,22 +641,31 @@ std::string molCode::caminho() const
     return std::filesystem::absolute(nome_arquivo);
 }
 
-// Função membro para definição de constantes
-void molCode::definir_constantes()
+// Função membro para remover um caractere
+void molCode::ch_remover(const int numero)
 {
-    define_key("\033[1;5A", CTRL_CIMA);
-    define_key("\033[1;5D", CTRL_ESQUERDA);
-    define_key("\033[1;5C", CTRL_DIREITA); // percorrer entre espaços [X]
-    define_key("\033[1;5B", CTRL_BAIXO);
+    linhas.erase(linhas.begin() + numero);
+}
 
-    define_key("\033[1;6D", CTRL_SH_ESQUERDA);
-    define_key("\033[1;6C", CTRL_SH_DIREITA); // inserir identação à direita [X]
+// Função membro para manipular tab
+std::string molCode::ch_tabs(std::string& linha) const
+{
+    std::size_t tab {linha.find('\t')};
+    return (tab == linha.npos) ? linha : ch_tabs(linha.replace(tab, 1, "   "));
+}
 
-    define_key("\x18", CTRL_X); // copiar linha inteira [X]
-    define_key("\x16", CTRL_V); // colar linha copiada [X]
-    define_key("\x02", CTRL_B); // selecionar toda a linha [X]
-    define_key("\x01", CTRL_A); // selecionar todo o arquivo [X]
-    define_key("\x0E", CTRL_N); // novo arquivo
+// Função membro para inserir caractere no meio da linha
+void molCode::ch_inserir(std::string linha, int numero)
+{
+    linha = ch_tabs(linha);
+    linhas.insert(linhas.begin() + numero, linha);
+}
+
+// Função membro para inserir ao final da linha
+void molCode::ch_anexo(std::string& linha)
+{
+    linha = ch_tabs(linha);
+    linhas.push_back(linha);
 }
 
 // Função membro para selecionar uma única linha
@@ -694,7 +678,7 @@ void molCode::selecionar_linha(const char modo_atual)
 
     clrtoeol();
 
-    mvprintw(y-scroll_offset, 0, linhas[y].c_str());
+    mvprintw(y-scroll_offset, 0, "%s", linhas[y].c_str());
 
     refresh();
 
@@ -741,7 +725,7 @@ void molCode::selecionar_todas_linhas(const char modo_atual)
     clrtoeol();
 
     for(size_t i{}; i < linhas.size(); i++){
-        mvprintw(i - scroll_offset, 0, linhas[i].c_str());
+        mvprintw(i - scroll_offset, 0, "%s", linhas[i].c_str());
     }
 
     int ch {getch()};
@@ -777,4 +761,22 @@ void molCode::selecionar_todas_linhas(const char modo_atual)
 
     attroff(COLOR_PAIR(1));
     attroff(A_REVERSE);
+}
+
+// Função membro para definição de constantes
+void molCode::definir_constantes()
+{
+    define_key("\033[1;5A", CTRL_CIMA);
+    define_key("\033[1;5D", CTRL_ESQUERDA); // percorrer entre espaços [ ]
+    define_key("\033[1;5C", CTRL_DIREITA); // percorrer entre espaços [X]
+    define_key("\033[1;5B", CTRL_BAIXO);
+
+    define_key("\033[1;6D", CTRL_SH_ESQUERDA);
+    define_key("\033[1;6C", CTRL_SH_DIREITA); // inserir identação à direita [X]
+
+    define_key("\x18", CTRL_X); // copiar linha inteira [X]
+    define_key("\x16", CTRL_V); // colar linha copiada [X]
+    define_key("\x02", CTRL_B); // selecionar toda a linha [X]
+    define_key("\x01", CTRL_A); // selecionar todo o arquivo [X]
+    define_key("\x0E", CTRL_N); // novo arquivo
 }
