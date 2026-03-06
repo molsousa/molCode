@@ -281,7 +281,16 @@ void molCode::entrada(const int c)
 
         // mover cursor a cada substring separada por espaço
         case CTRL_ESQUERDA:
+            {
+                while(x > 0 && !std::isspace(static_cast<unsigned char>(linhas[y][x]))){
+                    --x;
+                }
+                if(x > 0){
+                    --x;
+                }
 
+                move(y, x);
+            }
             break;
 
         // mover cursor a cada substring separada por espaço
