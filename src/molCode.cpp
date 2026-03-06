@@ -344,9 +344,14 @@ void molCode::entrada(const int c)
             case KEY_DC:
                 if(x == linhas[y].length() && y != linhas.size() - 1){
                     linhas[y] += linhas[y + 1]; // puxa a linha de baixo para cima
+                    size_t i;
 
-                    size_t i{y};
-
+                    if(x == 0){
+                        i = y;
+                    }
+                    else{
+                        i = y+1;
+                    }
                     while(i < linhas.size()-1){
                         linhas[i] = linhas[i+1];
                         i++;
