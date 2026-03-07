@@ -20,7 +20,11 @@
 
 [X] Ctrl + V: Para colar uma linha.
 
-[ ] Ctrl + BS: Para apagar uma string continua.
+[ ] Ctrl + BS: Para apagar uma substring continua.
+
+[X] Ctrl + Shift + seta pra cima: Mover string selecionada pra linha de cima.
+
+[X] Ctrl + Shift + seta pra baixo: Mover string selecionada pra linha de baixo.
 
 [X] Ctrl + seta esquerda: Mover cursor entre substrings pela esquerda.
 
@@ -36,7 +40,7 @@
 
 [X] Ctrl + A: Selecionar todo o texto.
 
-[X] Ctrl + B: Selecionar uma linha completa.
+[X] Ctrl + S: Selecionar uma linha completa.
 
 #### Funcionalidades:
 

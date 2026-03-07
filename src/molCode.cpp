@@ -306,7 +306,7 @@ void molCode::entrada(const int c)
             break;
 
         // selecionar linha única
-        case CTRL_B:
+        case CTRL_S:
             selecionar_linha('n');
 
             break;
@@ -454,6 +454,17 @@ void molCode::entrada(const int c)
                 linhas[y].insert(0, "   ");
                 break;
 
+            case CTRL_SH_CIMA:
+            {
+                if(y > 0){
+                    trocar_posicao_vertical(linhas[y], linhas[y-1]);
+                }
+
+                cima();
+            }
+
+                break;
+
             // mover cursor a cada substring separada por espaço
             case CTRL_ESQUERDA:
             {
@@ -480,8 +491,18 @@ void molCode::entrada(const int c)
 
                 break;
 
+            case CTRL_SH_BAIXO:
+            {
+                if(y+1 < linhas.size()){
+                    trocar_posicao_vertical(linhas[y], linhas[y+1]);
+                }
+
+                baixo();
+                break;
+            }
+
             // selecionar linha única
-            case CTRL_B:
+            case CTRL_S:
                 selecionar_linha('i');
 
                 break;
@@ -799,20 +820,28 @@ void molCode::selecionar_todas_linhas(const char modo_atual)
     attroff(A_REVERSE);
 }
 
+// Função membro para troca de strings
+void molCode::trocar_posicao_vertical(std::string& a, std::string& b)
+{
+    std::string temp {a};
+    a = b;
+    b = temp;
+}
+
 // Função membro para definição de constantes
 void molCode::definir_constantes()
 {
-    define_key("\033[1;5A", CTRL_CIMA);
-    define_key("\033[1;5D", CTRL_ESQUERDA); // percorrer entre espaços [ ]
+    define_key("\033[1;5D", CTRL_ESQUERDA); // percorrer entre espaços [X]
     define_key("\033[1;5C", CTRL_DIREITA); // percorrer entre espaços [X]
-    define_key("\033[1;5B", CTRL_BAIXO);
 
-    define_key("\033[1;6D", CTRL_SH_ESQUERDA);
+    define_key("\033[1;6A", CTRL_SH_CIMA); // mover string para a linha acima [X]
+    define_key("\033[1;6D", CTRL_SH_ESQUERDA); // remover identação à esquerda [X]
     define_key("\033[1;6C", CTRL_SH_DIREITA); // inserir identação à direita [X]
+    define_key("\033[1;6B", CTRL_SH_BAIXO); // mover string para a linha abaixo [X]
 
     define_key("\x18", CTRL_X); // copiar linha inteira [X]
     define_key("\x16", CTRL_V); // colar linha copiada [X]
-    define_key("\x02", CTRL_B); // selecionar toda a linha [X]
+    define_key("\x13", CTRL_S); // selecionar toda a linha [X]
     define_key("\x01", CTRL_A); // selecionar todo o arquivo [X]
     define_key("\x0E", CTRL_N); // novo arquivo
 }
