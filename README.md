@@ -62,14 +62,20 @@ A interface é simples, as cores das linhas de comando são alteradas com base n
 
 Para utilizar o editor, é preciso compilar utilizando o seguinte comando na pasta raiz:
 
-    make
+```bash
+make
+```
 
 Para executar a aplicação é necessário somente executar a seguinte linha na pasta em que o executável se encontra, a linha abaixo é pra criar um arquivo sem título e sem extensão:
 
-    ./molCode
+```bash
+./molCode.out
+```
 
 Para criar um arquivo com título e com a extensão desejada, deve-se executar a seguinte linha:
 
-    ./molCode <arquivo>.<extensao>
+```bash
+./molCode.out <arquivo>.<extensao>
+```
 
 ---
