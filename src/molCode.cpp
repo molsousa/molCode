@@ -388,8 +388,8 @@ void molCode::entrada(const int c)
             case KEY_STAB:
             case KEY_CATAB:
             case 9:
-                linhas[y].insert(x, 3, ' '); // insere 3 espaços
-                x += 3;
+                linhas[y].insert(x, 4, ' '); // insere 3 espaços
+                x += 4;
                 break;
 
             // move o cursor para o final do arquivo
@@ -438,20 +438,20 @@ void molCode::entrada(const int c)
             case CTRL_SH_ESQUERDA:
                 {
                     bool flag = true;
-                    for(size_t i{}; i < 3; i++){
+                    for(size_t i{}; i < 4; i++){
                         if(linhas[y][i] != ' '){
                             flag = false;
                         }
                     }
                     if(flag){
-                        linhas[y].erase(0, 3);
+                        linhas[y].erase(0, 4);
                     }
                 }
                 break;
 
             // insere tabulação no início da string
             case CTRL_SH_DIREITA:
-                linhas[y].insert(0, "   ");
+                linhas[y].insert(0, 4, ' ');
                 break;
 
             case CTRL_SH_CIMA:
