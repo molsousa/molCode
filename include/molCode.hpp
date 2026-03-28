@@ -20,10 +20,9 @@ const int CTRL_ESQUERDA {0x270};
 const int CTRL_DIREITA {0x271};
 const int CTRL_X {0x272};
 const int CTRL_V {0x273};
-const int CTRL_C {0x274};
 const int CTRL_A {0x275};
 const int CTRL_S {0x276};
-const int CTRL_N {0x277};
+const int CTRL_Z {0x277};
 
 // Definição de constantes com ctrl+shift
 const int CTRL_SH_CIMA {0x278};
@@ -43,7 +42,7 @@ const std::string ESPACO {" "};
 /*
  *  Classe para criar e gerenciar o editor de texto.
  *  Responsável por criar o editor, e gerenciar comandos.
-*/
+ */
 class molCode
 {
 private:
@@ -75,10 +74,10 @@ private:
 
 public:
     /*
-    *   Construtor para inicializar o editor de texto.
-    *   Caso tenha outro argumento inserido no terminal
+     *   Construtor para inicializar o editor de texto.
+     *   Caso tenha outro argumento inserido no terminal
         o arquivo é inicializado com título.
-    */
+     */
     molCode(const std::string&);
     //Destrutor para finalizar o editor.
     ~molCode();
@@ -88,7 +87,7 @@ public:
 protected:
     /*
      *  Manipulação dos atributos tipo size_t.
-    */
+     */
     // Função membro que retorna o valor de x.
     size_t get_x() const;
     // Função membro que atualiza a posição x.
@@ -108,7 +107,7 @@ protected:
 
     /*
      *  Manipulação da tela.
-    */
+     */
     // Função membro para atualizar estado.
     void atualizar();
     // Função membro para mostrar o estado.
@@ -116,36 +115,36 @@ protected:
     // Função membro para interpretar entrada do usuário.
     void entrada(const int);
     /*
-    *   Função membro para desenhar o conteúdo do buffer na
+     *   Função membro para desenhar o conteúdo do buffer na
         tela.
-    *   Caso tenha linhas não existentes no buffer, limpa.
-    *   Cursor fica na posição original.
-    */
+     *   Caso tenha linhas não existentes no buffer, limpa.
+     *   Cursor fica na posição original.
+     */
     void imprimir();
 
     /*
      *  Movimentação de cursor.
-    */
+     */
     // Função membro para mover cursor pra cima.
     void cima();
     /*
-    *   Função membro para mover cursor para a esquerda.
-    *   Caso o cursor chegue no início da coluna e tenha texto
+     *   Função membro para mover cursor para a esquerda.
+     *   Caso o cursor chegue no início da coluna e tenha texto
         acima, o cursor é movido pra cima na última linha.
-    */
+     */
     void esquerda();
     /*
-    *   Função membro para mover cursor para a direita.
-    *   Caso o cursor chegue ao final da coluna e tenha texto
+     *   Função membro para mover cursor para a direita.
+     *   Caso o cursor chegue ao final da coluna e tenha texto
         abaixo, o cursor é movido pro início da próxima linha.
-    */
+     */
     void direita();
     // Função membro para mover cursor pra baixo.
     void baixo();
 
     /*
      *  Manipulação do arquivo.
-    */
+     */
     // Função membro para abrir arquivo.
     void abrir();
     // Função membro para editar nome do arquivo.
@@ -157,7 +156,7 @@ protected:
 
     /*
      *  Funções membros para implementar em personalizações de diferentes extensões de arquivo.
-    */
+     */
     // Função membro para implementar personalização em palavras-chave.
     virtual void palavras_chave();
     // Função membro para implementar identação automática personalizada.

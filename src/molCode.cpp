@@ -1,10 +1,10 @@
 #include "../include/molCode.hpp"
 
 /*
-*   Construtor para inicializar o editor de texto.
-*   Caso tenha outro argumento inserido no terminal
+ *   Construtor para inicializar o editor de texto.
+ *   Caso tenha outro argumento inserido no terminal
     o arquivo é inicializado com título.
-*/
+ */
 molCode::molCode(const std::string& arquivo)
 {
     setlocale(LC_ALL, STRING_VAZIA.c_str());
@@ -549,6 +549,21 @@ void molCode::entrada(const int c)
 
                 break;
 
+            // apaga substring
+            case CTRL_Z:
+                if(x > 0 && std::isspace(static_cast<unsigned char>(linhas[y][x]))){
+                    --x;
+                }
+
+                while(x > 0 && !std::isspace(static_cast<unsigned char>(linhas[y][x]))){
+                    linhas[y].erase(x, 1);
+                    --x;
+                }
+                linhas[y].erase(x, 1);
+
+                move(y, x);
+                break;
+
             // por padrão, adiciona novo caractere
             default:
                 linhas[y].insert(x, 1, c);
@@ -560,11 +575,11 @@ void molCode::entrada(const int c)
 }
 
 /*
-*   Função membro para desenhar o conteúdo do buffer na
+ *   Função membro para desenhar o conteúdo do buffer na
     tela.
-*   Caso tenha linhas não existentes no buffer, limpa.
-*   Cursor fica na posição original.
-*/
+ *   Caso tenha linhas não existentes no buffer, limpa.
+ *   Cursor fica na posição original.
+ */
 void molCode::imprimir()
 {
     for(size_t i {}; i < static_cast<size_t>(LINES-1); ++i){
@@ -614,10 +629,10 @@ void molCode::cima()
 }
 
 /*
-*   Função membro para mover cursor para a esquerda.
-*   Caso o cursor chegue no início da coluna e tenha texto
+ *   Função membro para mover cursor para a esquerda.
+ *   Caso o cursor chegue no início da coluna e tenha texto
     acima, o cursor é movido pra cima na última linha.
-*/
+ */
 void molCode::esquerda()
 {
     if(x > 0){
@@ -634,10 +649,10 @@ void molCode::esquerda()
 }
 
 /*
-*   Função membro para mover cursor para a direita.
-*   Caso o cursor chegue ao final da coluna e tenha texto
+ *   Função membro para mover cursor para a direita.
+ *   Caso o cursor chegue ao final da coluna e tenha texto
     abaixo, o cursor é movido pro início da próxima linha.
-*/
+ */
 void molCode::direita()
 {
     if(x <= static_cast<size_t>(COLS) && x <= linhas[y].length()-1){
@@ -879,13 +894,17 @@ void molCode::definir_constantes()
     define_key("\x16", CTRL_V); // colar linha copiada [X]
     define_key("\x13", CTRL_S); // selecionar toda a linha [X]
     define_key("\x01", CTRL_A); // selecionar todo o arquivo [X]
-    define_key("\x0E", CTRL_N); // novo arquivo
+    define_key("\x1A", CTRL_Z); // apagar substring contínua
 }
 
+// Função membro para implementar personalização em palavras-chave.
 void molCode::palavras_chave() {}
 
+// Função membro para implementar identação automática personalizada.
 void molCode::identacao() {}
 
+// Função membro para implementar reconhecimento de pilha de procedimentos.
 void molCode::pilha_procedimentos() {}
 
+// Função membro para implementar criação de arquivo com texto inicializado.
 void molCode::template_personalizado() {}
