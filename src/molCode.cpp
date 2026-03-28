@@ -40,12 +40,48 @@ molCode::~molCode()
     endwin(); // finaliza ncurses e volta pro terminal anterior
 }
 
-// Função membro para inicializar ncurses
+// Função membro que retorna o valor de x.
+size_t molCode::get_x() const
+{
+    return this->x;
+}
+
+// Função membro que atualiza a posição x.
+void molCode::set_x(size_t x)
+{
+    this->x = x;
+}
+
+// Função membro que retorna o valor de y.
+size_t molCode::get_y() const
+{
+    return this->y;
+}
+
+// Função membro que atualiza a posição y
+void molCode::set_y(size_t y)
+{
+    this->y = y;
+}
+
+// Função membro que retorna o vetor de linhas.
+std::vector<std::string> molCode::get_linhas() const
+{
+    return this->linhas;
+}
+
+// Função membro que atualiza o vetor de linhas.
+void molCode::set_linhas(std::vector<std::string> linhas)
+{
+    this->linhas = linhas;
+}
+
+// Função membro para inicializar ncurses.
 void molCode::inicializar()
 {
     while(modo != 'q'){
         atualizar();
-        linhaDeEstado();
+        linha_de_estado();
         imprimir();
         int c {getch()};
         entrada(c);
@@ -77,7 +113,7 @@ void molCode::atualizar()
 }
 
 // Função membro para mostrar o estado.
-void molCode::linhaDeEstado()
+void molCode::linha_de_estado()
 {
     start_color();
     if(modo == 'n'){
@@ -525,9 +561,9 @@ void molCode::entrada(const int c)
 
 /*
 *   Função membro para desenhar o conteúdo do buffer na
-    tela
-*   Caso tenha linhas não existentes no buffer, limpa
-*   Cursor fica na posição original
+    tela.
+*   Caso tenha linhas não existentes no buffer, limpa.
+*   Cursor fica na posição original.
 */
 void molCode::imprimir()
 {
@@ -692,40 +728,40 @@ void molCode::salvar()
     }
 }
 
-// Função membro para buscar caminho absoluto
+// Função membro para buscar caminho absoluto.
 std::string molCode::caminho() const
 {
     return std::filesystem::absolute(nome_arquivo);
 }
 
-// Função membro para remover um caractere
+// Função membro para remover um caractere.
 void molCode::ch_remover(const int numero)
 {
     linhas.erase(linhas.begin() + numero);
 }
 
-// Função membro para manipular tab
+// Função membro para manipular tab.
 std::string molCode::ch_tabs(std::string& linha) const
 {
     std::size_t tab {linha.find('\t')};
     return (tab == linha.npos) ? linha : ch_tabs(linha.replace(tab, 1, "   "));
 }
 
-// Função membro para inserir caractere no meio da linha
+// Função membro para inserir caractere no meio da linha.
 void molCode::ch_inserir(std::string linha, int numero)
 {
     linha = ch_tabs(linha);
     linhas.insert(linhas.begin() + numero, linha);
 }
 
-// Função membro para inserir ao final da linha
+// Função membro para inserir ao final da linha.
 void molCode::ch_anexo(std::string& linha)
 {
     linha = ch_tabs(linha);
     linhas.push_back(linha);
 }
 
-// Função membro para selecionar uma única linha
+// Função membro para selecionar uma única linha.
 void molCode::selecionar_linha(const char modo_atual)
 {
     init_pair(1, COLOR_WHITE, COLOR_BLACK);
@@ -771,7 +807,7 @@ void molCode::selecionar_linha(const char modo_atual)
     attroff(A_REVERSE);
 }
 
-// Função membro para selecionar uma todas as linhas
+// Função membro para selecionar uma todas as linhas.
 void molCode::selecionar_todas_linhas(const char modo_atual)
 {
     init_pair(1, COLOR_WHITE, COLOR_BLACK);
@@ -820,7 +856,7 @@ void molCode::selecionar_todas_linhas(const char modo_atual)
     attroff(A_REVERSE);
 }
 
-// Função membro para troca de strings
+// Função membro para troca de strings.
 void molCode::trocar_posicao_vertical(std::string& a, std::string& b)
 {
     std::string temp {a};
@@ -828,7 +864,7 @@ void molCode::trocar_posicao_vertical(std::string& a, std::string& b)
     b = temp;
 }
 
-// Função membro para definição de constantes
+// Função membro para definição de constantes.
 void molCode::definir_constantes()
 {
     define_key("\033[1;5D", CTRL_ESQUERDA); // percorrer entre espaços [X]

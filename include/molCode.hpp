@@ -56,21 +56,21 @@ private:
     std::string copia; // string auxiliar para copiar linha
     size_t total_linhas, scroll_offset; // movimentar tela
 
-    // Função membro para remover um caractere
+    // Função membro para remover um caractere.
     void ch_remover(const int);
-    // Função membro para manipular tab
+    // Função membro para manipular tab.
     std::string ch_tabs(std::string&) const;
-    // Função membro para inserir caractere no meio da linha
+    // Função membro para inserir caractere no meio da linha.
     void ch_inserir(std::string, int);
-    // Função membro para inserir ao final da linha
+    // Função membro para inserir ao final da linha.
     void ch_anexo(std::string&);
-    // Função membro para selecionar uma única linha
+    // Função membro para selecionar uma única linha.
     void selecionar_linha(const char);
-    // Função membro para selecionar uma todas as linhas
+    // Função membro para selecionar uma todas as linhas.
     void selecionar_todas_linhas(const char);
-    // Função membro para troca de strings
+    // Função membro para troca de strings.
     void trocar_posicao_vertical(std::string&, std::string&);
-    // Função membro para definição de constantes
+    // Função membro para definição de constantes.
     void definir_constantes();
 
 public:
@@ -82,24 +82,50 @@ public:
     molCode(const std::string&);
     //Destrutor para finalizar o editor.
     ~molCode();
-    // Função membro para inicializar ncurses
+    // Função membro para inicializar ncurses.
     void inicializar();
 
 protected:
+    /*
+     *  Manipulação dos atributos tipo size_t.
+    */
+    // Função membro que retorna o valor de x.
+    size_t get_x() const;
+    // Função membro que atualiza a posição x.
+    void set_x(size_t);
+    // Função membro que retorna o valor de y.
+    size_t get_y() const;
+    // Função membro que atualiza a posição y.
+    void set_y(size_t);
+
+    /*
+     *  Manipulação dos atributos tipo vetor de strings.
+     */
+    // Função membro que retorna o vetor de linhas.
+    std::vector<std::string> get_linhas() const;
+    // Função membro que atualiza o vetor de linhas.
+    void set_linhas(std::vector< std::string > linhas);
+
+    /*
+     *  Manipulação da tela.
+    */
     // Função membro para atualizar estado.
     void atualizar();
     // Função membro para mostrar o estado.
-    void linhaDeEstado();
+    void linha_de_estado();
     // Função membro para interpretar entrada do usuário.
     void entrada(const int);
     /*
     *   Função membro para desenhar o conteúdo do buffer na
-        tela
-    *   Caso tenha linhas não existentes no buffer, limpa
-    *   Cursor fica na posição original
+        tela.
+    *   Caso tenha linhas não existentes no buffer, limpa.
+    *   Cursor fica na posição original.
     */
     void imprimir();
 
+    /*
+     *  Movimentação de cursor.
+    */
     // Função membro para mover cursor pra cima.
     void cima();
     /*
@@ -117,12 +143,27 @@ protected:
     // Função membro para mover cursor pra baixo.
     void baixo();
 
+    /*
+     *  Manipulação do arquivo.
+    */
     // Função membro para abrir arquivo.
     void abrir();
     // Função membro para editar nome do arquivo.
     void editar_nome(const std::string&);
     // Função membro para salvar arquivo.
     void salvar();
-    // Função membro para buscar caminho absoluto
+    // Função membro para buscar caminho absoluto.
     std::string caminho() const;
+
+    /*
+     *  Funções membros para implementar em personalizações de diferentes extensões de arquivo.
+    */
+    // Função membro para implementar personalização em palavras-chave.
+    virtual void palavras_chave();
+    // Função membro para implementar identação automática personalizada.
+    virtual void identacao();
+    // Função membro para implementar reconhecimento de pilha de procedimentos.
+    virtual void pilha_procedimentos();
+    // Função membro para implementar criação de arquivo com texto inicializado.
+    virtual void template_personalizado();
 };
