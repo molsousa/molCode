@@ -114,6 +114,10 @@ protected:
     void linha_de_estado();
     // Função membro para interpretar entrada do usuário.
     void entrada(const int);
+    // Função membro para processar entrada no modo normal.
+    void entrada_modo_normal(const int);
+    // Função membro para processar entrada no modo inserir.
+    void entrada_modo_inserir(const int);
     /*
      *   Função membro para desenhar o conteúdo do buffer na
         tela.
