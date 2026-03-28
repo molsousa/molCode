@@ -207,7 +207,7 @@ void molCode::entrada(const int c)
                 modo = 's';
                 salvar();
                 atualizar();
-                linhaDeEstado();
+                linha_de_estado();
                 imprimir();
                 napms(1500);
                 modo = 'n';
@@ -881,3 +881,11 @@ void molCode::definir_constantes()
     define_key("\x01", CTRL_A); // selecionar todo o arquivo [X]
     define_key("\x0E", CTRL_N); // novo arquivo
 }
+
+void molCode::palavras_chave() {}
+
+void molCode::identacao() {}
+
+void molCode::pilha_procedimentos() {}
+
+void molCode::template_personalizado() {}
