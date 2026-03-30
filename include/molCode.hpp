@@ -80,7 +80,7 @@ public:
      */
     molCode(const std::string&);
     //Destrutor para finalizar o editor.
-    ~molCode();
+    virtual ~molCode();
     // Função membro para inicializar ncurses.
     void inicializar();
 

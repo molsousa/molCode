@@ -48,6 +48,8 @@ Nesse modo é possível:
 
 - Copiar e colar uma linha inteira.
 
+- Remover substring separada por espaço.
+
 ## Interface
 
 A interface é simples, as cores das linhas de comando são alteradas com base na ação aplicada no momento, por exemplo:
@@ -57,6 +59,11 @@ A interface é simples, as cores das linhas de comando são alteradas com base n
 - Vermelho: para modo inserir.
 
 - Branco: por 1500ms ao salvar sem sair e também para caminho absoluto.
+
+## Expansão
+
+Fica em aberto a possibilidade de expandir o editor, adicionando personalizações como identação personalizada, cores em palavras-chave, reconhecimento de pilha de procedimento para criar '*brackets*' personalizados e template de inicialização personalizado.
+
 
 ## Como utilizar
 
